@@ -1,23 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cub3d.c                                            :+:      :+:    :+:   */
+/*   debug.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/24 17:53:15 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/02/24 18:37:35 by lporoshi         ###   ########.fr       */
+/*   Created: 2024/02/24 18:36:46 by lporoshi          #+#    #+#             */
+/*   Updated: 2024/02/24 18:37:21 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/cub3d.h"
 #include "../../libft/libft.h"
 
-int	main(int argc, char **argv)
+int	print_map(t_data *data)
 {
-	t_data	*data;
-	
-	if (argc != 2 || !argv || !(*argv))
-		return (1);
 	
 }
