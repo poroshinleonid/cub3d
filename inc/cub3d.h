@@ -6,7 +6,7 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 17:35:05 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/02/24 18:32:56 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/02/24 18:42:58 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,5 +48,9 @@ typedef struct s_data {
 
 # define ER_FATAL -1
 # define ER_MAP_NAME -2
+
+int	parse_map(t_data *data, char *pathname);
+
+int	print_map(t_data *data);
 
 #endif

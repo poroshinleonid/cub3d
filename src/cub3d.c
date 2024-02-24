@@ -6,18 +6,18 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 17:53:15 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/02/24 18:37:35 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/02/24 18:47:53 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../inc/cub3d.h"
+#include "../inc/cub3d.h"
 #include "../../libft/libft.h"
 
 int	main(int argc, char **argv)
 {
-	t_data	*data;
+	t_data	data;
 	
-	if (argc != 2 || !argv || !(*argv))
-		return (1);
+	parse_map(&data, "testmap.cub");
+	print_map(&data);
 	
 }

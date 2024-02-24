@@ -6,7 +6,7 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 16:58:48 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/02/24 18:36:25 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/02/24 18:46:56 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,6 @@ int	parse_map(t_data *data, char *pathname)
 	fd = open(pathname, O_RDONLY);
 	if (fd < 0)
 		exit(1);
-		//die(NULL, fd);
 	load_map(data, fd);
 	load_textures(data, fd);
 	close(fd);
