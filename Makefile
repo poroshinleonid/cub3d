@@ -7,7 +7,8 @@ MLXFLAGS = -framework Cocoa -framework OpenGL -framework IOKit -I./MLX42/include
 
 CFILES = ./src/cub3d.c \
 		./src/read/read.c \
-		./src/utils/ui.c
+		./src/utils/ui.c \
+		./src/draw/draw.c
 DEBUGFILES = src/debug/debug.c
 
 

@@ -6,12 +6,18 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 17:35:05 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/02/25 15:23:02 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/02/25 16:25:43 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "../libft/libft.h"
+#include "../MLX42/include/MLX42/MLX42.h"
+
 #ifndef CUB3D_H
 # define CUB3D_H
+
+# define WIN_HEIGHT	1920
+# define WIN_WIDTH	1080
 
 typedef struct s_entity {
 	float	x;
@@ -44,6 +50,8 @@ typedef struct s_data {
 	t_map	map;
 	t_entity	player;
 	t_entity	*entities;
+	mlx_t	*mlx_win;
+	mlx_image_t	*mlx_img;
 }	t_data;
 
 # define ER_FATAL -1
@@ -54,5 +62,7 @@ int	parse_map(t_data *data, char *pathname);
 int	print_mapp(t_data *data);
 
 void	terminate(t_data *data, const char *err_message);
+
+int		load_mlx_data(t_data *data);
 
 #endif

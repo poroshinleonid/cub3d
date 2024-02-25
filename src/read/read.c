@@ -6,7 +6,7 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 16:58:48 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/02/25 15:27:07 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/02/25 15:33:33 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,10 +49,9 @@ int	load_map(t_data *data, int fd)
 	printf("read [%s]\n", line);
 	write(1, "B", 1);
 	split_line = ft_split(line, ' ');
-	ft_printf("splitted %d\n", get_str_arr_sz(split_line));
+	//ft_printf("splitted %d\n", get_str_arr_sz(split_line));
 	while (get_str_arr_sz(split_line) == 2)
 	{
-		write(1, "U", 1);
 		load_data_part(data, split_line);
 		line = ft_strtrim(get_next_line(fd), "\n");
 		split_line = ft_split(line, ' ');
@@ -61,8 +60,8 @@ int	load_map(t_data *data, int fd)
 	data->map.grid = ft_calloc(100, sizeof(char *));
 	while (get_str_arr_sz(split_line) == 1)
 	{
-		ft_printf("Split line[1]: /%s/\n", split_line[0]);
-		ft_printf("Origi line[1]: /%s/\n", line);
+		//ft_printf("Split line[1]: /%s/\n", split_line[0]);
+		//ft_printf("Origi line[1]: /%s/\n", line);
 		load_map_line(data, split_line[0], i);
 		line = ft_strtrim(get_next_line(fd), "\n");
 		split_line = ft_split(line, ' ');
@@ -75,17 +74,15 @@ int	parse_map(t_data *data, char *pathname)
 {
 	int	fd;
 
-	printf("pathname [%s]\n", pathname);
 	if (pathname == NULL || *pathname == '\0')
 		return (EXIT_FAILURE);
 	fd = open(pathname, O_RDONLY);
 	if (fd < 0)
-	{
-		printf("fd error");
-		exit(1);
-	}
-	load_map(data, fd);
-	//load_textures(data, fd);
+		terminate(data, "Can't parse the map\n");
+	if (load_map(data, fd) != 0)
+		terminate(data, "Can't parse the map\n");
+	// if (load_textures(data, fd) != 0)
+	// 	terminate(data, "Can't parse the map\n");
 	close(fd);
 	return (EXIT_SUCCESS);
 }
