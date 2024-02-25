@@ -6,7 +6,7 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 17:35:05 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/02/25 15:08:06 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/02/25 15:15:58 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,5 +52,7 @@ typedef struct s_data {
 int	parse_map(t_data *data, char *pathname);
 
 int	print_mapp(t_data *data);
+
+void	terminate(t_data *data, const char *err_message);
 
 #endif

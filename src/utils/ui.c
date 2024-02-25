@@ -6,23 +6,19 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 17:04:19 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/02/25 15:12:55 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/02/25 15:15:50 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
 #include <errno.h>
+
+#include "../../inc/cub3d.h"
 #include "../../libft/libft.h"
 
 extern int	errno;
 
-void	terminate(t_data *data)
-{
-	free_all()
-	exit(1);
-}
-
-void	print_error(const char *message)
+static void	print_error(const char *message)
 {
 	int	ft_errno;
 
@@ -40,8 +36,9 @@ void	print_error(const char *message)
 	ft_putendl_fd((char *)message, STDERR_FILENO);
 }
 
-void	die(t_data *data, const char *message)
+void	terminate(t_data *data, const char *err_message)
 {
-	print_error(message);
-	terminate(data);
+	print_error(err_message);
+	//free_all();
+	exit(1);
 }
