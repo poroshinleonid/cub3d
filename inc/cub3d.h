@@ -6,7 +6,7 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 17:35:05 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/02/25 15:15:58 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/02/25 15:23:02 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,10 @@ typedef struct s_textures {
 	//how are we going to store textures? 
 	//some mlx format or array of ints
 	//or array of chars idk
-	char	*no;
-	char	*so;
-	char	*we;
-	char	*ea;
+	char	*no_path;
+	char	*so_path;
+	char	*we_path;
+	char	*ea_path;
 }	t_textures;
 
 typedef struct s_map {

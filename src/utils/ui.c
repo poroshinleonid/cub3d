@@ -6,7 +6,7 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 17:04:19 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/02/25 15:15:50 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/02/25 15:16:53 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ static void	print_error(const char *message)
 
 void	terminate(t_data *data, const char *err_message)
 {
+	(void)data;
 	print_error(err_message);
 	//free_all();
 	exit(1);
