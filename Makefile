@@ -6,8 +6,6 @@ CFLAGS = -Wall -Wextra -Werror
 MLXFLAGS = -framework Cocoa -framework OpenGL -framework IOKit -I./MLX42/include -L./MLX42/build -lmlx42 -lglfw
 
 CFILES = ./src/cub3d.c \
-		./src/debug/debug.c \
-		./src/memory/ft_new.c \
 		./src/read/read.c \
 		./src/utils/ui.c
 DEBUGFILES = src/debug/debug.c
@@ -20,10 +18,11 @@ getmlx:
 	(cd MLX42 && cmake -B build && cmake --build build -j4)
 
 libft:
-	make -C libft
+	echo "e"
 
 testleo: libft getmlx
-	$(CC) $(CFLAGS) $(MLXFLAGS) $(CFILES) $(DEBUGFILES) -o bin/testleo.c
+	make -C libft
+	$(CC) $(CFLAGS) $(MLXFLAGS) $(CFILES) $(DEBUGFILES) -Llibft -lft  -o bin/testleo.out
 
 test: getmlx
 	$(CC) $(CFLAGS) $(MLXFLAGS) taetest/*.c
