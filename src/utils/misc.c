@@ -1,30 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cub3d.c                                            :+:      :+:    :+:   */
+/*   misc.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/24 17:53:15 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/02/25 17:55:44 by lporoshi         ###   ########.fr       */
+/*   Created: 2024/02/25 17:35:55 by lporoshi          #+#    #+#             */
+/*   Updated: 2024/02/25 18:00:16 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/cub3d.h"
-#include "../../libft/libft.h"
-#include "../../MLX42/include/MLX42/MLX42.h"
 
-int	main(int argc, char **argv)
+int	ft_atoi_cub(char *s)
 {
-	t_data	*data;
-	(void)argc;
-	(void)argv;
+	int	res;
 
-	data = ft_calloc(1, sizeof(t_data));
-	data->map.floor_col = 0xFF000000;
-	data->map.sky_col = 0xFF000000;
-	parse_map(data, argv[1]);
-	load_mlx_data(data);
-	print_mapp(data);
-	mlx_loop(data->mlx_win);
+	if (!s || *s < '0' || *s > '9')
+		return (-1);
+	res = 0;
+	while (*s >= '0' && *s <= '9')
+	{
+		res *= 10;
+		res += *(s++) - '0';
+		if (res > 255)
+			return (-1);
+	}
+	if (*s != '\0')
+		return (-1);
+	return (res);
 }

@@ -2,13 +2,14 @@ NAME=cub3D
 
 CC=cc
 
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -g
 MLXFLAGS = -framework Cocoa -framework OpenGL -framework IOKit -I./MLX42/include -L./MLX42/build -lmlx42 -lglfw
 
 CFILES = ./src/cub3d.c \
 		./src/read/read.c \
 		./src/utils/ui.c \
-		./src/draw/draw.c
+		./src/draw/draw.c \
+		./src/utils/misc.c
 DEBUGFILES = src/debug/debug.c
 
 
