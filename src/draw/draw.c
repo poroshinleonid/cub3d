@@ -6,7 +6,7 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/25 16:25:31 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/02/26 15:05:18 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/02/26 15:14:30 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -227,11 +227,34 @@ void	drawscreen(void *ptr){
 	draw_minimap(data);
 }
 
+void	listenkeys(mlx_key_data_t keydata, void* ptr)
+{
+	t_data *data;
+
+	data = (t_data *)ptr;
+
+	(void)keydata;
+	mlx_t* mlx = data->mlx_win;
+
+	if (mlx_is_key_down(mlx, MLX_KEY_ESCAPE))
+		mlx_close_window(mlx);
+	if (mlx_is_key_down(mlx, MLX_KEY_LEFT))
+		data->player.x += PL_SPEED;
+	if (mlx_is_key_down(mlx, MLX_KEY_RIGHT))
+		data->player.x -= PL_SPEED;
+	if (mlx_is_key_down(mlx, MLX_KEY_UP))
+		data->player.y += PL_SPEED;
+	if (mlx_is_key_down(mlx, MLX_KEY_DOWN))
+		data->player.y -= PL_SPEED;
+	return ;
+}
+
 int	load_mlx_data(t_data *data)
 {
 	data->mlx_win = mlx_init(WIN_WIDTH, WIN_HEIGHT, "cub3d", 0);
 	data->mlx_img = mlx_new_image(data->mlx_win, WIN_WIDTH, WIN_HEIGHT);
 	mlx_image_to_window(data->mlx_win, data->mlx_img, 0, 0);
 	mlx_loop_hook(data->mlx_win, drawscreen, data);
+	mlx_key_hook(data->mlx_win, listenkeys,(void *)data);
 	return (0);
 }
