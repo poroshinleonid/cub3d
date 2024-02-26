@@ -6,7 +6,7 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/25 16:25:31 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/02/25 16:27:46 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/02/25 16:39:31 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 int32_t get_color(t_data *data, int x, int y)
 {
 	(void)data;
-	return (0xFF00FF - x + y);
+	return (x * y);
 }
 
 void	drawscreen(void *ptr){

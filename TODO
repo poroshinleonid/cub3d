@@ -1,25 +1,9 @@
-1. Where do we write error messages? In the child or parent?
-2. Where do we terminate? In the child or parent?
+1. Read textures
+2. Read map
+3. Load textures
+4. Init mlx window
+5. Draw pixels in loop
 
 
+libft consists_of
 
-
-modules:
-	1. libft
-	2. mlx
-	3. utils lib
-
-1. read all
-2. 
-
-
-good raycasting alg:
-	1. https://www.youtube.com/watch?v=NbSee-XM7WA&t=1483s
-	2. 
-	3. 
-
-
-Core lib:
-	1. Vector universal or?
-	2. some structs that use points or idk
-	3. angles, rotations, etc
