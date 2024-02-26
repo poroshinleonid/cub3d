@@ -1,12 +1,11 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include "MLX42.h"
+#include "MLX42/MLX42.h"
 #define WIDTH 512
 #define HEIGHT 512
 #include "textures.h"
 #include "cub3d.h"
-#include "engine.h"
 
 static void error(void)
 {
@@ -28,11 +27,7 @@ int32_t	main(void)
 	data->texture_names.ea = "./textures/image.png";
 	data->texture_names.so = "./textures/image.png";
 	data->mlx_win = mlx;
-	data->player.x = 0;
-	data->player.y = 0;
-	data->player.theta = 0;
-	data->player.dx = 0;
-	data->player.dy = 0;
+
 	load_textures(data);
 
 	// Display the image
@@ -45,8 +40,6 @@ int32_t	main(void)
 
 	if (mlx_image_to_window(mlx, img, 0, 0))
 		error();
-
-	mlx_loop_hook(data->mlx_win, ft_hook, data);
 	mlx_loop(mlx);
 
 	// Optional, terminate will clean up any leftovers, this is just to demonstrate.

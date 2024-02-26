@@ -4,7 +4,7 @@ SRCDIR = src
 INCDIR = inc  
 IFLAGS = -I ./inc -I ./libft
 CFLAGS = -Wall -Wextra -Werror -g
-MLXFLAGS = -framework Cocoa -framework OpenGL -framework IOKit -I./MLX42/include -L./MLX42/build -lmlx42 -lglfw
+MLXFLAGS = -framework Cocoa -framework OpenGL -framework IOKit -I./MLX42/include/MLX42 -L./MLX42/build -lmlx42 -lglfw
 
 SOURCE_FILES = cub3d.c \
 		read/read.c \
@@ -44,11 +44,11 @@ install_mlx:
 testleo: $(LIBFT) install_mlx
 	$(CC) $(CFLAGS) $(MLXFLAGS) $(CFILES) $(DEBUGFILES) -Llibft -lft  -o bin/testleo.out
 
-test: install_mlx
-	$(CC) $(CFLAGS) $(MLXFLAGS) taetest/*.c
-test: getmlx
-	$(CC) $(CFLAGS) $(MLXFLAGS) taetest/*.c src/textures.c src/utils/ui.c -L./libft -lft $(IFLAGS)
+taetexturetest: install_mlx
+	$(CC) $(CFLAGS) $(MLXFLAGS) taetest/textures.c src/textures.c src/utils/ui.c -L./libft -lft $(IFLAGS)
 
+taetest: install_mlx
+	$(CC) $(CFLAGS) $(MLXFLAGS) taetest/main.c src/engine/movement.c src/textures.c src/utils/ui.c -L./libft -lft $(IFLAGS)
 
 all: $(NAME)
 

@@ -21,6 +21,8 @@ typedef struct s_entity {
 	float	x;
 	float	y;
 	float	theta;
+	float	dx;
+	float	dy;
 }	t_entity;
 
 typedef struct s_textures {

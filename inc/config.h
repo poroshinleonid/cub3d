@@ -22,6 +22,9 @@
 # define TILE_SZ 10
 # define TILE_BORDER_SZ 1
 
-# define PL_SPEED 0.1
+# define PL_SPEED_SCALE 5
+# define PL_ROT_SPEED 0.1
+
+# define PI 3.14159265359
 
 #endif
