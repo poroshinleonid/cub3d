@@ -6,12 +6,13 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 18:36:46 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/02/25 18:13:21 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/02/26 13:14:23 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/cub3d.h"
 #include "../../libft/libft.h"
+#include <stdio.h>
 
 int	print_mapp(t_data *data)
 {
@@ -23,6 +24,7 @@ int	print_mapp(t_data *data)
 	ft_printf("WE: %s\n", data->map.textures.ea_path);
 	ft_printf(" F: %d\n", data->map.floor_col);
 	ft_printf(" C: %d\n", data->map.sky_col);
+	printf("Player: (%f, %f), theta=%f\n", data->player.x, data->player.y, data->player.theta);
 	lines = data->map.grid;
 	while (lines && *lines != NULL)
 	{

@@ -6,12 +6,13 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 16:58:48 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/02/25 18:15:52 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/02/26 13:19:20 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <fcntl.h>
 #include <stdlib.h>
+#include <math.h>
 #include "../../inc/cub3d.h"
 #include "../../libft/libft.h"
 
@@ -112,12 +113,53 @@ int	save_map_meta(t_data *data, int fd)
 	return (0);
 }
 
+int	save_player_pos(t_data *data, int x, int y)
+{
+	data->player.x = x + 0.5;
+	data->player.y = y + 0.5;
+	if (data->map.grid[y][x] == 'N')
+		data->player.theta = M_PI/2.0;
+	else if (data->map.grid[y][x] == 'S')
+		data->player.theta = M_PI + M_PI/2.0;
+	else if (data->map.grid[y][x] == 'W')
+		data->player.theta = M_PI;
+	else if (data->map.grid[y][x] == 'E')
+		data->player.theta = 0.0;
+	else
+		return (1);
+	return (0);
+}
+
+int	find_player_pos(t_data *data)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	while (i < data->map_h)
+	{
+		j = 0;
+		while (j < data->map_w)
+		{
+			if (!ft_isdigit(data->map.grid[i][j]))
+			{
+				save_player_pos(data, j, i);
+			}
+			j++;
+		}
+		i++;
+	}
+	return (0);
+}
+
 int	load_map(t_data *data, int fd)
 {
 	int	i;
 
 	while (save_map_meta(data, fd) == 0)
 		(void)i;
+	close(fd);
+	find_player_pos(data);
 	//Check that map is valid (player exists, there are walls, etc)
 	return (0);
 }
@@ -135,7 +177,6 @@ int	parse_map(t_data *data, char *pathname)
 		terminate(data, "Can't parse the map\n");
 	// if (load_textures(data, fd) != 0)
 	// 	terminate(data, "Can't parse the map\n");
-	close(fd);
 	return (EXIT_SUCCESS);
 }
 
