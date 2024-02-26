@@ -3,6 +3,7 @@ NAME=cub3D
 CC=cc
 
 CFLAGS = -Wall -Wextra -Werror
+IFLAGS = -I ./inc -I ./libft
 MLXFLAGS = -framework Cocoa -framework OpenGL -framework IOKit -I./MLX42/include -L./MLX42/build -lmlx42 -lglfw
 
 CFILES = ./src/cub3d.c \
@@ -26,5 +27,6 @@ testleo: libft getmlx
 	$(CC) $(CFLAGS) $(MLXFLAGS) $(CFILES) $(DEBUGFILES) -Llibft -lft  -o bin/testleo.out
 
 test: getmlx
-	$(CC) $(CFLAGS) $(MLXFLAGS) taetest/*.c
+	$(CC) $(CFLAGS) $(MLXFLAGS) taetest/*.c src/textures.c src/utils/ui.c -L./libft -lft $(IFLAGS)
+
 

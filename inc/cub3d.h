@@ -26,14 +26,18 @@ typedef struct s_entity {
 }	t_entity;
 
 typedef struct s_textures {
-	//how are we going to store textures? 
-	//some mlx format or array of ints
-	//or array of chars idk
-	char	*no_path;
-	char	*so_path;
-	char	*we_path;
-	char	*ea_path;
+	mlx_image_t	*no;
+	mlx_image_t	*so;
+	mlx_image_t	*we;
+	mlx_image_t	*ea;
 }	t_textures;
+
+typedef struct s_texture_names {
+	char	*no;
+	char	*so;
+	char	*we;
+	char	*ea;
+}	t_texture_names;
 
 typedef struct s_map {
 	int	h;
@@ -52,6 +56,8 @@ typedef struct s_data {
 	t_entity	*entities;
 	mlx_t	*mlx_win;
 	mlx_image_t	*mlx_img;
+	t_textures textures;
+	t_texture_names texture_names;
 }	t_data;
 
 # define ER_FATAL -1
