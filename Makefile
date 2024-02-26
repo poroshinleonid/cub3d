@@ -2,6 +2,7 @@ NAME = cub3D
 CC = cc
 SRCDIR = src
 INCDIR = inc  
+IFLAGS = -I ./inc -I ./libft
 CFLAGS = -Wall -Wextra -Werror -g
 MLXFLAGS = -framework Cocoa -framework OpenGL -framework IOKit -I./MLX42/include -L./MLX42/build -lmlx42 -lglfw
 
@@ -45,6 +46,9 @@ testleo: $(LIBFT) install_mlx
 
 test: install_mlx
 	$(CC) $(CFLAGS) $(MLXFLAGS) taetest/*.c
+test: getmlx
+	$(CC) $(CFLAGS) $(MLXFLAGS) taetest/*.c src/textures.c src/utils/ui.c -L./libft -lft $(IFLAGS)
+
 
 all: $(NAME)
 
