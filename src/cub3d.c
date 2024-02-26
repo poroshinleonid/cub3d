@@ -6,13 +6,13 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 17:53:15 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/02/26 14:04:50 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/02/26 16:41:01 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/cub3d.h"
-#include "../../libft/libft.h"
-#include "../../MLX42/include/MLX42/MLX42.h"
+#include "libft.h"
+#include "MLX42.h"
 
 int	main(int argc, char **argv)
 {

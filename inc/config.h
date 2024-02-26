@@ -6,7 +6,7 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/25 17:13:01 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/02/26 16:17:13 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/02/26 16:39:47 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@
 
 # define PL_SPEED_SCALE 5
 # define PL_ROT_SPEED 0.1
+
+# define PL_SPEED 0.1
 
 # define PI 3.14159265359
 

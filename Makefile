@@ -42,7 +42,7 @@ install_mlx:
 	(cd MLX42 && cmake -B build && cmake --build build -j4)
 
 testleo: $(LIBFT) install_mlx
-	$(CC) $(CFLAGS) $(MLXFLAGS) $(CFILES) $(DEBUGFILES) -Llibft -lft  -o bin/testleo.out
+	$(CC) $(CFLAGS) $(MLXFLAGS) $(CFILES) $(DEBUGFILES) $(IFLAGS) -Llibft -lft  -o bin/testleo.out
 
 taetexturetest: install_mlx
 	$(CC) $(CFLAGS) $(MLXFLAGS) taetest/textures.c src/textures.c src/utils/ui.c -L./libft -lft $(IFLAGS)
