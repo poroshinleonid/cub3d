@@ -6,7 +6,7 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 17:35:05 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/02/26 13:36:39 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/02/26 14:04:39 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,16 @@ typedef struct s_map {
 	t_textures		textures;
 }	t_map;
 
+typedef struct s_rect {
+	int			x;
+	int			y;
+	int			dx;
+	int			dy;
+	int			mapx;
+	int			mapy;
+	uint32_t	color;
+}	t_rect;
+
 typedef struct s_data {
 	int			map_h;
 	int			map_w;
@@ -60,6 +70,7 @@ typedef struct s_data {
 	mlx_image_t	*mlx_img;
 	t_textures textures;
 	t_texture_names texture_names;
+	t_rect		rect;
 }	t_data;
 
 # define ER_FATAL -1
