@@ -15,6 +15,10 @@ void rotation_hook(t_data *data) {
     }
     data->player.dx = cos(data->player.theta) * PL_SPEED_SCALE;
     data->player.dy = sin(data->player.theta) * PL_SPEED_SCALE;
+    data->tmp_d = data->cam_x;
+    data->norm = sqrt(data->cam_x * data->cam_x + data->cam_x * data->cam_x);
+    data->cam_x = data->cam_y / data->norm;
+    data->cam_y = -data->tmp_d / data->norm;
 }
 
 void movement_hook(t_data *data) {
@@ -40,7 +44,9 @@ void ft_hook(void *param) {
     t_data *data;
 
     data = param;
+
     movement_hook(data);
     rotation_hook(data);
-    printf("%f %f %f\n", data->player.x, data->player.y, data->player.theta);
+    printf("tae: %f %f %f\n", data->player.x, data->player.y, data->player.theta);
+    cast_rays(data);
 }

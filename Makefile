@@ -10,10 +10,12 @@ SOURCE_FILES = cub3d.c \
 		read/read.c \
 		utils/ui.c \
 		draw/draw.c \
-		utils/misc.c
+		utils/misc.c \
+		engine/movement.c
 CFILES = $(addprefix $(SRCDIR)/,$(SOURCE_FILES))
 MAINSOURCE := $(SRCDIR)/cub3d.c
-DEBUGFILES = src/debug/debug.c
+DEBUGFILES = src/debug/debug.c \
+			taetest/main.c
 
 INCLUDE_FILES := \
 					cub3d.h \

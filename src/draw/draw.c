@@ -6,7 +6,7 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/25 16:25:31 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/02/26 16:34:11 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/02/26 17:09:49 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ void	verLine(t_data *data, int x, int start, int end, uint32_t color)
 {
 	int i;
 
-	printf("%d %d, %u\n", start, end, color);
+	//printf("%d %d, %u\n", start, end, color);
 	i = start;
 	while (i <= end)
 	{
@@ -99,16 +99,15 @@ void	verLine(t_data *data, int x, int start, int end, uint32_t color)
 
 void	cast_rays(t_data *data)
 {
-	double posX = data->player.x, posY = data->player.y;  //x and y start position
-	double dirX = 1, dirY = -1; //initial direction vector
-	double planeX = 0, planeY = 0.66; //the 2d raycaster version of camera plane
-
+	double posX = data->player.x, posY = data->player.y; 
+	double plane_x = data->player.dx, plane_y = data->player.dy; //x and y start position
+	ft_printf("cAST\n");
 	for(int x = 0; x < WIN_WIDTH; x++)
     {
       //calculate ray position and direction
       double cameraX = 2 * x / WIN_WIDTH_DO - 1.0; //x-coordinate in camera space
-      double rayDirX = dirX + planeX * cameraX;
-      double rayDirY = dirY + planeY * cameraX;
+      double rayDirX = data->player.dx + plane_x * cameraX;
+      double rayDirY = -data->player.dy + plane_y * cameraX;
 	//which box of the map we're in
       int mapX = (int)(posX);
       int mapY = (int)(posY);
@@ -192,7 +191,7 @@ void	cast_rays(t_data *data)
         default: color = 0x00FF0000; break; //yellow
       }
 
-      if (side == 1) {color = color * 0.9;}
+      if (side == 1) {color = color * 0.8;}
 	  verLine(data, x, 0, drawStart, 0xFFFF1F);
       verLine(data, x, drawStart, drawEnd, color);
 	  verLine(data, x, drawEnd + 1, WIN_HEIGHT - 1, 0xFFFFFF);
@@ -218,13 +217,13 @@ void	listenkeys(mlx_key_data_t keydata, void* ptr)
 	if (mlx_is_key_down(mlx, MLX_KEY_ESCAPE) || mlx_is_key_down(mlx, MLX_KEY_Q))
 		mlx_close_window(mlx);
 	if (mlx_is_key_down(mlx, MLX_KEY_LEFT))
-		data->player.x += PL_SPEED;
-	if (mlx_is_key_down(mlx, MLX_KEY_RIGHT))
 		data->player.x -= PL_SPEED;
+	if (mlx_is_key_down(mlx, MLX_KEY_RIGHT))
+		data->player.x += PL_SPEED;
 	if (mlx_is_key_down(mlx, MLX_KEY_UP))
-		data->player.y += PL_SPEED;
-	if (mlx_is_key_down(mlx, MLX_KEY_DOWN))
 		data->player.y -= PL_SPEED;
+	if (mlx_is_key_down(mlx, MLX_KEY_DOWN))
+		data->player.y += PL_SPEED;
 	return ;
 }
 
@@ -233,7 +232,8 @@ int	load_mlx_data(t_data *data)
 	data->mlx_win = mlx_init(WIN_WIDTH, WIN_HEIGHT, "cub3d", 0);
 	data->mlx_img = mlx_new_image(data->mlx_win, WIN_WIDTH, WIN_HEIGHT);
 	mlx_image_to_window(data->mlx_win, data->mlx_img, 0, 0);
-	mlx_loop_hook(data->mlx_win, drawscreen, data);
-	mlx_key_hook(data->mlx_win, listenkeys,(void *)data);
+	//mlx_loop_hook(data->mlx_win, drawscreen, data);
+	//mlx_key_hook(data->mlx_win, listenkeys,(void *)data);
+	mlx_loop_hook(data->mlx_win, ft_hook, data);
 	return (0);
 }

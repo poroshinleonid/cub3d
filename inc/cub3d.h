@@ -6,7 +6,7 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 17:35:05 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/02/26 16:13:00 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/02/26 17:18:38 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,10 @@ typedef struct s_data {
 	t_textures textures;
 	t_texture_names texture_names;
 	t_rect		rect;
+	double		cam_x;
+	double		cam_y;
+	double		tmp_d;
+	double		norm;
 }	t_data;
 
 # define ER_FATAL -1
@@ -88,4 +92,7 @@ int		load_mlx_data(t_data *data);
 
 int		ft_atoi_cub(char *s);
 
+void movement_hook(t_data *data);
+void ft_hook(void *param);
+void	cast_rays(t_data *data);
 #endif
