@@ -6,7 +6,7 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 17:35:05 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/02/25 17:49:14 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/02/26 13:36:39 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,10 @@ typedef struct s_entity {
 }	t_entity;
 
 typedef struct s_textures {
+	char		*no_path;
+	char		*so_path;
+	char		*we_path;
+	char		*ea_path;
 	mlx_image_t	*no;
 	mlx_image_t	*so;
 	mlx_image_t	*we;
