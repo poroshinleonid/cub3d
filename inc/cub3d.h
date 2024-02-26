@@ -6,7 +6,7 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 17:35:05 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/02/26 16:13:00 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/02/26 18:41:22 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,13 @@
 
 #ifndef CUB3D_H
 # define CUB3D_H
+
+typedef struct s_vec {
+	double	x;
+	double	y;
+	double	theta;
+	double	triangle_angle;
+}	t_vec;
 
 typedef struct s_entity {
 	float	x;

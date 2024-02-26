@@ -6,13 +6,15 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/25 16:25:31 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/02/26 16:34:11 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/02/26 18:56:44 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/cub3d.h"
 #include "../../libft/libft.h"
 #include "../../MLX42/include/MLX42/MLX42.h"
+#include "engine.h"
+#include <math.h>
 
 int32_t get_color(t_data *data, int x, int y)
 {
@@ -88,7 +90,7 @@ void	verLine(t_data *data, int x, int start, int end, uint32_t color)
 {
 	int i;
 
-	printf("%d %d, %u\n", start, end, color);
+	//printf("%d %d, %u\n", start, end, color);
 	i = start;
 	while (i <= end)
 	{
@@ -96,114 +98,129 @@ void	verLine(t_data *data, int x, int start, int end, uint32_t color)
 		i++;
 	}
 }
+//The vector is normalized by default!
+void	ang_to_vec(double angle, t_vec *vector)
+{
+	vector->x = cos(angle);
+	vector->y = sin(angle);
+	vector->theta = angle;
+	vector->triangle_angle = angle;
+	while (vector->triangle_angle > PI/2 + EPS)
+		vector->triangle_angle -= PI/2;
+	return ;
+}
 
+t_vec	*get_next_point(t_data *data, t_vec ray_vec, t_vec cur_ray_pos, t_vec signs)
+{
+	double	hor_dx;
+	double	hor_dy;
+	double	ver_dx;
+	double	ver_dy;
+	double	hor_vectorlen;
+	double	ver_vectorlen;
+	t_vec	*res_vec;
+
+	res_vec = ft_calloc(sizeof(res_vec), 1);
+	hor_dx = (int)(cur_ray_pos.x + (signs.x == 1)) - cur_ray_pos.x;
+	hor_dy = hor_dx / tan(ray_vec.triangle_angle);
+	hor_vectorlen = sqrt(hor_dx * hor_dx + hor_dy * hor_dy);
+
+
+	ver_dy = (int)(cur_ray_pos.y + (signs.y == 1)) - cur_ray_pos.y;
+	ver_dx = hor_dy / tan(PI/2 - ray_vec.triangle_angle);
+	ver_vectorlen = sqrt(ver_dx * ver_dx + ver_dy * ver_dy);
+	
+	if (hor_vectorlen < ver_vectorlen)
+	{
+		res_vec->x = ray_vec.x + hor_dx;
+		res_vec->y = ray_vec.y + hor_dy;
+	}
+	else
+	{
+		res_vec->x = ray_vec.x + ver_dx;
+		res_vec->y = ray_vec.y + ver_dy;
+	}
+	return (res_vec);
+}
+
+int	closest_int(double f)
+{
+	int	i;
+
+	i = (int)f;
+	if (f - (double)i > 0.5);
+		return (i + 1);
+	return (i);
+}
+
+int	is_solid(t_data *data, t_vec *point)
+{
+	int	x;
+	int	y;
+
+	x = closest_int(point->x);
+	y = closest_int(point->y);
+	if (data->map.grid[y][x] == 1)
+		return (1);
+	return(0);
+}
+
+void	cast_one_ray(t_data *data, double cur_ang)
+{
+	t_vec	ray_vec;
+	t_vec	hor_vec;
+	t_vec	ver_vec;
+	t_vec 	*next_intersction_v;
+	int		hit;
+
+	hit = 0;
+	ang_to_vec(cur_ang, &ray_vec);
+	t_vec	cur_ray_pos;
+	cur_ray_pos.x = data->player.x;
+	cur_ray_pos.y = data->player.y;
+	t_vec	signs;
+	signs.x = (ray_vec.x > 0)?(1):(-1);
+	signs.y = (ray_vec.y > 0)?(1):(-1);
+	while (!hit)
+	{
+		next_intersction_v = get_next_point(data, ray_vec, cur_ray_pos, signs);
+		if (is_solid(data, next_intersction_v))
+			hit = 1;
+	}
+	// Here we have next_intersection_v containing a point, and we know that this point is solid
+	// Now we calculate the length of this vector,
+	// from it determine the length of the line we need to draw on the screen
+	// And normalize the line etc etc
+	// And draw the line and floor and sky
+}
+
+//angles_amt = 120dg => 60 in each half
+//ang_step = 120dg/WIN_HEIGHT
+//min _ang = player_ang - [(angles_step * WIN_HEIGHT)/2 = (120dg/WIN_HEIGHT * WIN_HEIGHT)/2 = (2p/3)/2 = 2p/6]
+//min_ang = player_ang - 2p/6
+//max_ang = player_ang + 2p/6
 void	cast_rays(t_data *data)
 {
-	double posX = data->player.x, posY = data->player.y;  //x and y start position
-	double dirX = 1, dirY = -1; //initial direction vector
-	double planeX = 0, planeY = 0.66; //the 2d raycaster version of camera plane
+	double	cur_ang;
+	double	ang_step;
+	int		cur_x;
 
-	for(int x = 0; x < WIN_WIDTH; x++)
-    {
-      //calculate ray position and direction
-      double cameraX = 2 * x / WIN_WIDTH_DO - 1.0; //x-coordinate in camera space
-      double rayDirX = dirX + planeX * cameraX;
-      double rayDirY = dirY + planeY * cameraX;
-	//which box of the map we're in
-      int mapX = (int)(posX);
-      int mapY = (int)(posY);
-
-      //length of ray from current position to next x or y-side
-      double sideDistX;
-      double sideDistY;
-
-       //length of ray from one x or y-side to next x or y-side
-      double deltaDistX = (rayDirX == 0) ? 1e30 : ft_abs(1 / rayDirX);
-      double deltaDistY = (rayDirY == 0) ? 1e30 : ft_abs(1 / rayDirY);
-      double perpWallDist;
-
-      //what direction to step in x or y-direction (either +1 or -1)
-      int stepX;
-      int stepY;
-
-      int hit = 0; //was there a wall hit?
-      int side; //was a NS or a EW wall hit?
-	
-      //calculate step and initial sideDist
-      if (rayDirX < 0)
-      {
-        stepX = -1;
-        sideDistX = (posX - mapX) * deltaDistX;
-      }
-      else
-      {
-        stepX = 1;
-        sideDistX = (mapX + 1.0 - posX) * deltaDistX;
-      }
-      if (rayDirY < 0)
-      {
-        stepY = -1;
-        sideDistY = (posY - mapY) * deltaDistY;
-      }
-      else
-      {
-        stepY = 1;
-        sideDistY = (mapY + 1.0 - posY) * deltaDistY;
-      }
-
-      //perform DDA
-      while (hit == 0)
-      {
-        //jump to next map square, either in x-direction, or in y-direction
-        if (sideDistX < sideDistY)
-        {
-          sideDistX += deltaDistX;
-          mapX += stepX;
-          side = 0;
-        }
-        else
-        {
-          sideDistY += deltaDistY;
-          mapY += stepY;
-          side = 1;
-        }
-		if (data->map.grid[mapX][mapY] == '1') hit = 1;
-      } 
-
-//Calculate distance projected on camera direction (Euclidean distance would give fisheye effect!)ß
-      if(side == 0) perpWallDist = (sideDistX - deltaDistX);
-      else          perpWallDist = (sideDistY - deltaDistY);
-
-      //Calculate height of line to draw on screen
-      int lineHeight = (int)(WIN_HEIGHT / perpWallDist);
-
-      //calculate lowest and highest pixel to fill in current stripe
-
-      int drawStart = -lineHeight / 2 + WIN_HEIGHT / 2;
-      int drawEnd = lineHeight / 2 + WIN_HEIGHT / 2;
-	  if(drawStart < 0)drawStart = 0;
-      if(drawEnd >= WIN_HEIGHT)drawEnd = WIN_HEIGHT - 2;
-	  
-      //choose wall color
-      uint32_t color;
-      switch(data->map.grid[mapX][mapY])
-      {
-        case '1':  color = 0xFF5555FF;  break; //red
-        default: color = 0x00FF0000; break; //yellow
-      }
-
-      if (side == 1) {color = color * 0.9;}
-	  verLine(data, x, 0, drawStart, 0xFFFF1F);
-      verLine(data, x, drawStart, drawEnd, color);
-	  verLine(data, x, drawEnd + 1, WIN_HEIGHT - 1, 0xFFFFFF);
-    }
+	cur_ang = data->player.theta - M_PI/3;
+	ang_step = (2 * M_PI / 3)/WIN_HEIGHT;
+	cur_x = 0;
+	while (cur_x < WIN_HEIGHT)
+	{
+		cast_one_ray(data, cur_ang);
+		cur_ang += ang_step;
+		cur_x++;
+	}
 }
 
 void	drawscreen(void *ptr){
 	t_data	*data = (t_data *)ptr;
 	
 	cast_rays(data);
-	//draw_minimap(data);
+	draw_minimap(data);
 }
 
 void	listenkeys(mlx_key_data_t keydata, void* ptr)
@@ -218,13 +235,13 @@ void	listenkeys(mlx_key_data_t keydata, void* ptr)
 	if (mlx_is_key_down(mlx, MLX_KEY_ESCAPE) || mlx_is_key_down(mlx, MLX_KEY_Q))
 		mlx_close_window(mlx);
 	if (mlx_is_key_down(mlx, MLX_KEY_LEFT))
-		data->player.x += PL_SPEED;
-	if (mlx_is_key_down(mlx, MLX_KEY_RIGHT))
 		data->player.x -= PL_SPEED;
+	if (mlx_is_key_down(mlx, MLX_KEY_RIGHT))
+		data->player.x += PL_SPEED;
 	if (mlx_is_key_down(mlx, MLX_KEY_UP))
-		data->player.y += PL_SPEED;
-	if (mlx_is_key_down(mlx, MLX_KEY_DOWN))
 		data->player.y -= PL_SPEED;
+	if (mlx_is_key_down(mlx, MLX_KEY_DOWN))
+		data->player.y += PL_SPEED;
 	return ;
 }
 
@@ -233,7 +250,8 @@ int	load_mlx_data(t_data *data)
 	data->mlx_win = mlx_init(WIN_WIDTH, WIN_HEIGHT, "cub3d", 0);
 	data->mlx_img = mlx_new_image(data->mlx_win, WIN_WIDTH, WIN_HEIGHT);
 	mlx_image_to_window(data->mlx_win, data->mlx_img, 0, 0);
-	mlx_loop_hook(data->mlx_win, drawscreen, data);
-	mlx_key_hook(data->mlx_win, listenkeys,(void *)data);
+	//mlx_loop_hook(data->mlx_win, drawscreen, data);
+	//mlx_key_hook(data->mlx_win, listenkeys,(void *)data);
+	mlx_loop_hook(data->mlx_win, ft_hook, data);
 	return (0);
 }
