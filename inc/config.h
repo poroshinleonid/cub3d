@@ -6,7 +6,7 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/25 17:13:01 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/02/27 16:53:08 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/02/27 17:29:10 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define  CONFIG_H
 
 # define EPS 0.000001
+# define INF 10000000000.0
 
 # define WIN_WIDTH	1920
 # define WIN_WIDTH_DO 1920.0
