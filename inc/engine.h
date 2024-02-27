@@ -7,4 +7,7 @@
 
 void ft_hook(void *param);
 
+
+// TODO: main func, set up all the hooks inside, add exit, think about bonuses, do todo in movement (maybe create vector of movement inside)
+
 #endif
