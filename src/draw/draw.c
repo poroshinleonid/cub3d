@@ -6,7 +6,7 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/25 16:25:31 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/02/26 18:56:44 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/02/27 15:49:26 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ void	verLine(t_data *data, int x, int start, int end, uint32_t color)
 {
 	int i;
 
-	//printf("%d %d, %u\n", start, end, color);
+	printf("%d %d, %u\n", start, end, color);
 	i = start;
 	while (i <= end)
 	{
@@ -120,6 +120,7 @@ t_vec	*get_next_point(t_data *data, t_vec ray_vec, t_vec cur_ray_pos, t_vec sign
 	double	ver_vectorlen;
 	t_vec	*res_vec;
 
+	(void)data;
 	res_vec = ft_calloc(sizeof(res_vec), 1);
 	hor_dx = (int)(cur_ray_pos.x + (signs.x == 1)) - cur_ray_pos.x;
 	hor_dy = hor_dx / tan(ray_vec.triangle_angle);
@@ -148,7 +149,7 @@ int	closest_int(double f)
 	int	i;
 
 	i = (int)f;
-	if (f - (double)i > 0.5);
+	if (f - (double)i > 0.5)
 		return (i + 1);
 	return (i);
 }
@@ -160,21 +161,35 @@ int	is_solid(t_data *data, t_vec *point)
 
 	x = closest_int(point->x);
 	y = closest_int(point->y);
-	if (data->map.grid[y][x] == 1)
+	if ( x < 0 || x > data->map_w || y < 0 || y > data->map_h || data->map.grid[y][x] == 1)
 		return (1);
 	return(0);
 }
 
-void	cast_one_ray(t_data *data, double cur_ang)
+double	distance(t_vec *v1, t_vec *v2)
+{
+	int	dx;
+	int	dy;
+
+	dx = v1->x - v2->x;
+	dy = v1->y - v2->y;
+	return (sqrt(dx * dx - dy * dy));
+}
+
+void	cast_one_ray(t_data *data, double cur_ang, int cur_x)
 {
 	t_vec	ray_vec;
-	t_vec	hor_vec;
-	t_vec	ver_vec;
-	t_vec 	*next_intersction_v;
+	//t_vec	hor_vec;
+	//t_vec	ver_vec;
+	t_vec 	*next_intersection_v;
 	int		hit;
 
 	hit = 0;
 	ang_to_vec(cur_ang, &ray_vec);
+	t_vec	player_pos;
+	player_pos.x = data->player.x;
+	player_pos.y = data->player.y;
+	player_pos.theta = data->player.theta;
 	t_vec	cur_ray_pos;
 	cur_ray_pos.x = data->player.x;
 	cur_ray_pos.y = data->player.y;
@@ -183,10 +198,28 @@ void	cast_one_ray(t_data *data, double cur_ang)
 	signs.y = (ray_vec.y > 0)?(1):(-1);
 	while (!hit)
 	{
-		next_intersction_v = get_next_point(data, ray_vec, cur_ray_pos, signs);
-		if (is_solid(data, next_intersction_v))
+		//Infinite loop here for some reason!
+		write(1, "S", 1);
+		next_intersection_v = get_next_point(data, ray_vec, cur_ray_pos, signs);
+		cur_ray_pos.x = next_intersection_v->x;
+		cur_ray_pos.y = next_intersection_v->y;
+		if (is_solid(data, next_intersection_v))
 			hit = 1;
 	}
+	double	ray_len = distance(&player_pos, next_intersection_v);
+	//height 1 -> 
+	//int		height = ray_len * tan(FOV_ANGLE);
+	int	wall_line_height = ray_len / WIN_HEIGHT;
+	int	line_start = -wall_line_height / 2 + WIN_HEIGHT / 2;
+	if (line_start < 0)
+		line_start = 0;
+	int	line_end = wall_line_height / 2 + WIN_HEIGHT / 2;
+	if (line_end >= WIN_HEIGHT)
+		line_end = WIN_HEIGHT - 1;
+	verLine(data, cur_x, 0, line_start, 0x00000000);
+	verLine(data, cur_x, line_start, line_end, 0xFFFFFFFF);
+	verLine(data, cur_x, line_end, WIN_HEIGHT - 1, 0x00000000);
+	//
 	// Here we have next_intersection_v containing a point, and we know that this point is solid
 	// Now we calculate the length of this vector,
 	// from it determine the length of the line we need to draw on the screen
@@ -206,11 +239,11 @@ void	cast_rays(t_data *data)
 	int		cur_x;
 
 	cur_ang = data->player.theta - M_PI/3;
-	ang_step = (2 * M_PI / 3)/WIN_HEIGHT;
+	ang_step = (2 * M_PI / 3)/WIN_WIDTH;
 	cur_x = 0;
-	while (cur_x < WIN_HEIGHT)
+	while (cur_x < WIN_WIDTH)
 	{
-		cast_one_ray(data, cur_ang);
+		cast_one_ray(data, cur_ang, cur_x);
 		cur_ang += ang_step;
 		cur_x++;
 	}
@@ -220,7 +253,7 @@ void	drawscreen(void *ptr){
 	t_data	*data = (t_data *)ptr;
 	
 	cast_rays(data);
-	draw_minimap(data);
+	//draw_minimap(data);
 }
 
 void	listenkeys(mlx_key_data_t keydata, void* ptr)

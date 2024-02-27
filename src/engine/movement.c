@@ -40,6 +40,7 @@ void ft_hook(void *param) {
     t_data *data;
 
     data = param;
+    drawscreen(data);
     movement_hook(data);
     rotation_hook(data);
     printf("%f %f %f\n", data->player.x, data->player.y, data->player.theta);

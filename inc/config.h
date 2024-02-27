@@ -6,7 +6,7 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/25 17:13:01 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/02/26 18:42:51 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/02/27 15:37:38 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,5 +30,7 @@
 # define PL_SPEED 0.1
 
 # define PI 3.14159265359
+
+# define FOV_ANGLE 1.0472
 
 #endif

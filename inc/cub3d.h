@@ -6,7 +6,7 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 17:35:05 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/02/26 18:41:22 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/02/27 15:48:16 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,5 +94,7 @@ void	terminate(t_data *data, const char *err_message);
 int		load_mlx_data(t_data *data);
 
 int		ft_atoi_cub(char *s);
+
+void	drawscreen(void *ptr);
 
 #endif
