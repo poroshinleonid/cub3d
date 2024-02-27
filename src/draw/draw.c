@@ -6,7 +6,7 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/25 16:25:31 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/02/27 15:49:26 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/02/27 17:09:07 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,8 +81,10 @@ void	draw_minimap(t_data *data)
 
 double	ft_abs(double num)
 {
-	if (num < 0)
-		return (-num);
+	if (num == -0.0)
+		return (0.0);
+	if (num < 0.000)
+		return (num * -1.0 + 0.000000001);
 	return (num);
 }
 
@@ -90,7 +92,7 @@ void	verLine(t_data *data, int x, int start, int end, uint32_t color)
 {
 	int i;
 
-	printf("%d %d, %u\n", start, end, color);
+	printf("VerLine: x=%d; (%d, %d), %u\n", x, start, end, color);
 	i = start;
 	while (i <= end)
 	{
@@ -133,13 +135,13 @@ t_vec	*get_next_point(t_data *data, t_vec ray_vec, t_vec cur_ray_pos, t_vec sign
 	
 	if (hor_vectorlen < ver_vectorlen)
 	{
-		res_vec->x = ray_vec.x + hor_dx;
-		res_vec->y = ray_vec.y + hor_dy;
+		res_vec->x = cur_ray_pos.x + hor_dx;
+		res_vec->y = cur_ray_pos.y + hor_dy;
 	}
 	else
 	{
-		res_vec->x = ray_vec.x + ver_dx;
-		res_vec->y = ray_vec.y + ver_dy;
+		res_vec->x = cur_ray_pos.x + ver_dx;
+		res_vec->y = cur_ray_pos.y + ver_dy;
 	}
 	return (res_vec);
 }
@@ -158,22 +160,26 @@ int	is_solid(t_data *data, t_vec *point)
 {
 	int	x;
 	int	y;
-
 	x = closest_int(point->x);
 	y = closest_int(point->y);
-	if ( x < 0 || x > data->map_w || y < 0 || y > data->map_h || data->map.grid[y][x] == 1)
+	printf("Checking if solid: (%lf, %lf)->(%d, %d), when map dimensions: %d, %d\n", \
+	point->x, point->y, x, y, \
+	data->map_w, data->map_h);
+	if ( x <= 0 || x >= data->map_w - 1 || y <= 0 || y >= data->map_h - 1 || data->map.grid[y][x] != 0)
 		return (1);
 	return(0);
 }
 
 double	distance(t_vec *v1, t_vec *v2)
 {
-	int	dx;
-	int	dy;
+	double	dx;
+	double	dy;
 
 	dx = v1->x - v2->x;
 	dy = v1->y - v2->y;
-	return (sqrt(dx * dx - dy * dy));
+	printf("Calculating distance. (%f, %f) and (%f, %f)\n", v1->x, v1->y, v2->x, v2->y);
+	printf("dx and dy = %lf, %lf\n", dx, dy);
+	return (sqrt(dx * dx + dy * dy));
 }
 
 void	cast_one_ray(t_data *data, double cur_ang, int cur_x)
@@ -199,7 +205,7 @@ void	cast_one_ray(t_data *data, double cur_ang, int cur_x)
 	while (!hit)
 	{
 		//Infinite loop here for some reason!
-		write(1, "S", 1);
+		//write(1, "S", 1);
 		next_intersection_v = get_next_point(data, ray_vec, cur_ray_pos, signs);
 		cur_ray_pos.x = next_intersection_v->x;
 		cur_ray_pos.y = next_intersection_v->y;
@@ -207,19 +213,27 @@ void	cast_one_ray(t_data *data, double cur_ang, int cur_x)
 			hit = 1;
 	}
 	double	ray_len = distance(&player_pos, next_intersection_v);
+	//hypotenuse = ray_len
+	//angle = angle
+	//therefore, perpendicular distance = hypotenuse_len * sin(angle) or *cos(angle)
+	printf("Wrayy len1   = %f, cos = %f\n", ray_len, 110.0);
+	if(cos(cur_ang) == 0.0)
+		ray_len = ft_abs(ray_len * cos(cur_ang));
+	
+	printf("Wrayy len2   = %f\n", ray_len);
 	//height 1 -> 
 	//int		height = ray_len * tan(FOV_ANGLE);
-	int	wall_line_height = ray_len / WIN_HEIGHT;
-	int	line_start = -wall_line_height / 2 + WIN_HEIGHT / 2;
+	int	wall_line_height = ((double)WIN_HEIGHT / ray_len) / 2.0;
+	printf("wall line len   = %d\n", wall_line_height);
+	int	line_start = (-wall_line_height / 2) + (WIN_HEIGHT / 2);
 	if (line_start < 0)
 		line_start = 0;
-	int	line_end = wall_line_height / 2 + WIN_HEIGHT / 2;
+	int	line_end = (wall_line_height / 2) + (WIN_HEIGHT / 2);
 	if (line_end >= WIN_HEIGHT)
 		line_end = WIN_HEIGHT - 1;
-	verLine(data, cur_x, 0, line_start, 0x00000000);
+	verLine(data, cur_x, 0, line_start, 0xFFFF1F);
 	verLine(data, cur_x, line_start, line_end, 0xFFFFFFFF);
-	verLine(data, cur_x, line_end, WIN_HEIGHT - 1, 0x00000000);
-	//
+	verLine(data, cur_x, line_end, WIN_HEIGHT - 1, 0x11FFFF);
 	// Here we have next_intersection_v containing a point, and we know that this point is solid
 	// Now we calculate the length of this vector,
 	// from it determine the length of the line we need to draw on the screen
@@ -241,19 +255,23 @@ void	cast_rays(t_data *data)
 	cur_ang = data->player.theta - M_PI/3;
 	ang_step = (2 * M_PI / 3)/WIN_WIDTH;
 	cur_x = 0;
-	while (cur_x < WIN_WIDTH)
+	while (cur_x < WIN_WIDTH - 10)
 	{
+		ft_printf("casting ray on x=%d\n", cur_x);
 		cast_one_ray(data, cur_ang, cur_x);
 		cur_ang += ang_step;
 		cur_x++;
 	}
+	ft_printf("all rays cast\n");
 }
 
 void	drawscreen(void *ptr){
 	t_data	*data = (t_data *)ptr;
 	
 	cast_rays(data);
+	printf("Rendered screen!\n");
 	//draw_minimap(data);
+	mlx_image_to_window(data->mlx_win, data->mlx_img, 0, 0);
 }
 
 void	listenkeys(mlx_key_data_t keydata, void* ptr)

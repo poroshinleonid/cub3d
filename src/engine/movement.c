@@ -63,5 +63,5 @@ void ft_hook(void *param) {
     drawscreen(data);
     movement_hook(data);
     rotation_hook(data);
-    printf("%f %f %f %f %f\n", data->player.x, data->player.y, data->player.theta, data->player.dx, data->player.dy);
+    //printf("%f %f %f %f %f\n", data->player.x, data->player.y, data->player.theta, data->player.dx, data->player.dy);
 }
