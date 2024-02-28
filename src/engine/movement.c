@@ -29,6 +29,15 @@ static void normalize(float* dx, float* dy) {
     *dy *= PL_SPEED;
 }
 
+// TODO
+static void nullify_if_wall(t_data* data, float* dx, float* dy) {
+    (void) data; (void) dx; (void) dy;
+    // if (is_wall(data->player.x + *dx, data->player.y))
+    //     *dx = 0.0;
+    // if (is_wall(data->player.x, data->player.y + *dy))
+    //     *dy = 0.0;
+}
+
 void movement_hook(t_data *data) {
     float dx;
     float dy;
@@ -52,8 +61,16 @@ void movement_hook(t_data *data) {
         dy += data->player.dx;
     }
     normalize(&dx, &dy);
+    nullify_if_wall(data, &dx, &dy);
     data->player.x += dx;
     data->player.y += dy;
+}
+
+static void exit_hook(t_data* data) {
+    if (mlx_is_key_down(data->mlx_win, MLX_KEY_ESCAPE)) {
+        //free_all();
+        exit(0);
+    }
 }
 
 void ft_hook(void *param) {
@@ -64,4 +81,5 @@ void ft_hook(void *param) {
     movement_hook(data);
     rotation_hook(data);
     //printf("%f %f %f %f %f\n", data->player.x, data->player.y, data->player.theta, data->player.dx, data->player.dy);
+    exit_hook(data);
 }
