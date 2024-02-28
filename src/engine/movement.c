@@ -68,7 +68,8 @@ void movement_hook(t_data *data) {
 
 static void exit_hook(t_data* data) {
     if (mlx_is_key_down(data->mlx_win, MLX_KEY_ESCAPE)) {
-        terminate(data, "Finished");
+        //free_all();
+        exit(0);
     }
 }
 
