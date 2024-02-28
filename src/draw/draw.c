@@ -6,7 +6,7 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/25 16:25:31 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/02/28 12:42:42 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/02/28 13:24:46 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -207,13 +207,13 @@ int	is_solid(t_data *data, t_vec *point)
 	int	y;
 	x = closest_int(point->x);
 	y = closest_int(point->y);
-	// printf("Checking if solid: (%lf, %lf)->(%d, %d), when map dimensions: %d, %d\n", \
+	//printf("Checking if solid: (%lf, %lf)->(%d, %d), when map dimensions: %d, %d\n", \
 	// point->x, point->y, x, y, \
 	// data->map_w, data->map_h);
 
 	// if(x <= 0 || x >= data->map_w - 1 || y <= 0 || y >= data->map_h - 1)
 	// 	printf("Ray got out of the borders of the map !!!\n");
-	if (x <= 0 || x >= data->map_w - 1 || y <= 0 || y >= data->map_h - 1 || data->map.grid[y][x] == 1)
+	if (x <= 1 || x >= data->map_w - 1 || y <= 1 || y >= data->map_h - 1 || data->map.grid[y][x] == 1)
 		return (1);
 	return(0);
 }
@@ -243,7 +243,13 @@ double	ft_modf(double d)
 	res = modf(d, &tmp);
 	return (res);
 }
-
+void	vec_copy(t_vec src, t_vec *dst)
+{
+	dst->x = src.x;
+	dst->y = src.y;
+	dst->theta = src.theta;
+	dst->triangle_angle = src.triangle_angle;
+}
 void	calc_first_collisions(t_data *data)
 {
 	if ((data->ray.abs_ang > M_PI - EPS && data->ray.abs_ang < M_PI + EPS) || \
@@ -264,12 +270,14 @@ void	calc_first_collisions(t_data *data)
 	data->ray.y_step_vec.x = data->ray.y_step_vec.y * cos(data->ray.abs_ang);
 	if (vec_len(&(data->ray.x_step_vec)) < vec_len(&(data->ray.y_step_vec)))
 	{
-		data->ray.cur_pos.x = data->ray.x_step_vec.x;
-		data->ray.cur_pos.y = data->ray.x_step_vec.y;
+		data->ray.cur_pos.x =  data->player.x + data->ray.x_step_vec.x;
+		data->ray.cur_pos.y =  data->player.x + data->ray.x_step_vec.y;
 		return ;
 	}
-	data->ray.cur_pos.x = data->ray.y_step_vec.x;
-	data->ray.cur_pos.y = data->ray.y_step_vec.y;
+	data->ray.cur_pos.x = data->player.x + data->ray.y_step_vec.x;
+	data->ray.cur_pos.y = data->player.y + data->ray.y_step_vec.y;
+	vec_copy(data->ray.cur_pos, &(data->ray.cur_x_ray));
+	vec_copy(data->ray.cur_pos, &(data->ray.cur_y_ray));
 }
 
 void	calc_step_lengths(t_data *data)
@@ -298,6 +306,73 @@ void	save_quarter(t_data *data)
 		data->ray.dir_vec.x = 1;
 	data->ray.dir_vec.theta = data->ray.abs_ang;
 	calc_triangle_angle(&(data->ray.dir_vec));
+	data->ray.cur_pos.theta = data->ray.dir_vec.theta;
+	data->ray.cur_pos.triangle_angle = data->ray.dir_vec.triangle_angle;
+}
+
+//ASSUMIG ANGLES ARE THE SAME!!!
+void	vec_write_sum_parallel(t_vec *dst, t_vec arg1, t_vec arg2)
+{
+	dst->x = arg1.x + arg2.x;
+	dst->y = arg1.y + arg2.y;
+}
+
+void	normalize_vec_to_map(t_data *data, t_vec *vec)
+{
+	if (vec->x < 1)
+		vec->x = 1;
+	if (vec->x >= data->map_w)
+		vec->x = data->map_w - 1;
+	if (vec->y < 1)
+		vec->y = 1;
+	if (vec->y >= data->map_h)
+		vec->y = data->map_h - 1;
+}
+
+void	ray_step(t_data *data)
+{
+	t_vec	next_x_ray;
+	t_vec	next_y_ray;
+	double	dist_x;
+	double	dist_y;
+
+	vec_write_sum_parallel(&next_x_ray, data->ray.cur_x_ray, data->ray.x_step_vec);
+	vec_write_sum_parallel(&next_y_ray, data->ray.cur_y_ray, data->ray.y_step_vec);
+	normalize_vec_to_map(data, &next_x_ray);
+	normalize_vec_to_map(data, &next_y_ray);
+	dist_x = distance(&(data->ray.player_pos), &next_x_ray);
+	dist_y = distance(&(data->ray.player_pos), &next_y_ray);
+	if (dist_x < dist_y)
+	{
+		vec_copy(next_x_ray, &(data->ray.cur_pos));
+		vec_copy(next_x_ray, &(data->ray.cur_x_ray));
+	}
+	else
+	{
+		vec_copy(next_y_ray, &(data->ray.cur_pos));
+		vec_copy(next_y_ray, &(data->ray.cur_y_ray));
+	}
+}
+
+void	get_line_height(t_data *data)
+{
+	int	wall_height;
+	int	line_start;
+	int	line_end;
+	double	ray_len;
+
+	ray_len = distance(&(data->ray.player_pos), &(data->ray.cur_pos));
+	// printf("ray len = %f\n", ray_len);
+	wall_height = ((double)WIN_HEIGHT / ray_len);
+	line_start = (-wall_height / 2) + (WIN_HEIGHT / 2);
+	if (line_start < 0)
+		line_start = 0;
+	line_end = (wall_height / 2) + (WIN_HEIGHT / 2);
+	if (line_end >= WIN_HEIGHT)
+		line_end = WIN_HEIGHT - 1;
+	data->ray.wall_top = line_start;
+	data->ray.wall_bot = line_end;
+	
 }
 
 void	cast_one_ray(t_data *data)
@@ -305,31 +380,32 @@ void	cast_one_ray(t_data *data)
 	save_quarter(data);
 	calc_first_collisions(data);
 	calc_step_lengths(data);
+	//printf("after pre-step cur pos = %f, %f\n", data->ray.cur_pos.x, data->ray.cur_pos.y);
 	while (!is_solid(data, &(data->ray.cur_pos)))
 	{
-		// aaaaaa
-		// do we need to store xray and yray separately?
-		//Do we increment them in one cycle idk aaa
+		ray_step(data);
 	}
-	//get_line_height(data);
-	//render_ray(data, cur_x, data->ray.wall_top, data->ray.wall_bot, 0x00);
+	printf("calculated ray end: (%f, %f)\n", data->ray.cur_pos.x, data->ray.cur_pos.y);
+	get_line_height(data);
+	render_ray(data, data->ray.win_x, data->ray.wall_top, data->ray.wall_bot, 0x00);
 }
 
 void	cast_rays(t_data *data)
 {
-	int		cur_x;
-	
-	cur_x = 0;
+	data->ray.win_x = 0;
 	data->ray.abs_ang = data->player.theta - FOV_HALFANGLE;
 	data->ray.rel_ang = -FOV_HALFANGLE;
-	while (cur_x < WIN_WIDTH - 10)
+	data->ray.player_pos.x = data->player.x;
+	data->ray.player_pos.y = data->player.y;
+	data->ray.player_pos.theta = data->player.theta;
+	while (data->ray.win_x < WIN_WIDTH - 10)
 	{
 		cast_one_ray(data);
 		data->ray.abs_ang += ANGLE_STEP;
 		data->ray.rel_ang += ANGLE_STEP;
-		cur_x++;
+		data->ray.win_x++;
 	}
-	// ft_printf("all rays cast\n");
+	ft_printf("all rays cast\n");
 }
 
 void	drawscreen(void *ptr){
