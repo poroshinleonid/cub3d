@@ -6,7 +6,7 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/25 16:25:31 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/02/28 11:40:28 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/02/28 17:22:37 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,45 @@
 #include "../../MLX42/include/MLX42/MLX42.h"
 #include "engine.h"
 #include <math.h>
+
+
+void	calc_first_collisions(t_data *data)
+{
+	if ((data->ray.abs_ang > PI1_2 - EPS && data->ray.abs_ang < PI1_2 + EPS) || \
+		((data->ray.abs_ang < PI3_2 + EPS && data->ray.abs_ang >PI3_2 - EPS)))
+		data->ray.x_step_vec.x = 0;
+	else if (data->ray.abs_ang > PI1_2 && data->ray.abs_ang < PI3_2)
+		data->ray.x_step_vec.x =  ft_modf(data->player.x) * data->ray.dir_vec.x;
+	else 
+		data->ray.x_step_vec.x = (1 - ft_modf(data->player.x)) * data->ray.dir_vec.x;
+	data->ray.x_step_vec.y = data->ray.x_step_vec.x * ft_abs(cos(data->ray.tr_ang));
+	
+	if ((data->ray.abs_ang > M_PI - EPS && data->ray.abs_ang < M_PI + EPS) || \
+		((data->ray.abs_ang < EPS && data->ray.abs_ang > -EPS)))
+		data->ray.x_step_vec.y = 0;
+	else if (data->ray.abs_ang < M_PI && data->ray.abs_ang > 0)
+		data->ray.y_step_vec.y =  ft_modf(data->player.y) * data->ray.dir_vec.y;
+	else 
+		data->ray.y_step_vec.y = (1 - ft_modf(data->player.y)) * data->ray.dir_vec.y;
+	data->ray.y_step_vec.x = data->ray.y_step_vec.y * ft_abs(cos(data->ray.tr_ang));
+	if (vec_len(&(data->ray.x_step_vec)) < vec_len(&(data->ray.y_step_vec)))
+	{
+		data->ray.cur_pos.x =  data->player.x + data->ray.x_step_vec.x;
+		data->ray.cur_pos.y =  data->player.x + data->ray.x_step_vec.y;
+		return ;
+	}
+	data->ray.cur_pos.x = data->player.x + data->ray.y_step_vec.x;
+	data->ray.cur_pos.y = data->player.y + data->ray.y_step_vec.y;
+	vec_copy(data->ray.cur_pos, &(data->ray.cur_x_ray));
+	vec_copy(data->ray.cur_pos, &(data->ray.cur_y_ray));
+}
+
+
+
+
+
+
+
 
 int32_t get_color(t_data *data, int x, int y)
 {

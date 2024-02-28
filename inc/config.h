@@ -6,7 +6,7 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/25 17:13:01 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/02/28 11:51:39 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/02/28 17:54:58 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 
 # define PI1_2 1.57079632679
 # define PI1_3 1.0471975512
+# define PI1_4 0.78539816339
 
 # define PI3_2 4.71238898038
 
@@ -27,7 +28,8 @@
 
 # define MAP_CHARSET "01NSWE"
 # define MAP_PLAYER_CHARSET "NSWE"
-# define TILE_SZ 10
+# define TILE_SZ 50
+# define SCALE_2D 50
 # define TILE_BORDER_SZ 1
 
 # define PL_SPEED_SCALE 0.1
@@ -41,6 +43,8 @@
 # define FOV_HALFANGLE 0.523599
 // ANGLE_STEP = (FOV_ANGLE / WIN_WIDTH) 
 // Needs recalculation when changing FOV!
-# define ANGLE_STEP 0.00096962736
+# define ANGLE_STEP 0.00054541539
+
+
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/25 16:25:31 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/02/28 13:24:46 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/02/28 18:50:31 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,167 @@
 #include "engine.h"
 #include <math.h>
 
+void	vec_copy(t_vec src, t_vec *dst)
+{
+	dst->x = src.x;
+	dst->y = src.y;
+	dst->theta = src.theta;
+	dst->triangle_angle = src.triangle_angle;
+}
+
+double	distance(t_vec *v1, t_vec *v2)
+{
+	double	dx;
+	double	dy;
+
+	dx = v1->x - v2->x;
+	dy = v1->y - v2->y;
+	return (sqrt(dx * dx + dy * dy));
+}
+
+double	vec_len(t_vec *vector)
+{
+	return (sqrt((vector->x * vector->x) + (vector->y * vector->y)));
+}
+
+double	ft_modf(double d)
+{
+	double	tmp;
+	double	res;
+
+	res = modf(d, &tmp);
+	return (res);
+}
+//ASSUMIG ANGLES ARE THE SAME!!!
+void	vec_write_sum_parallel(t_vec *dst, t_vec arg1, t_vec arg2)
+{
+	dst->x = arg1.x + arg2.x;
+	dst->y = arg1.y + arg2.y;
+}
+
+void	normalize_vec_to_map(t_data *data, t_vec *vec)
+{
+	if (vec->x < 1)
+		vec->x = 1;
+	if (vec->x >= data->map_w)
+		vec->x = data->map_w - 1;
+	if (vec->y < 1)
+		vec->y = 1;
+	if (vec->y >= data->map_h)
+		vec->y = data->map_h - 2;
+}
+
+void	ray_step(t_data *data)
+{
+	t_vec	next_x_ray;
+	t_vec	next_y_ray;
+	double	dist_x;
+	double	dist_y;
+	
+	//
+	vec_write_sum_parallel(&next_x_ray, data->ray.cur_x_ray, data->ray.x_step_vec);
+	vec_write_sum_parallel(&next_y_ray, data->ray.cur_y_ray, data->ray.y_step_vec);
+	normalize_vec_to_map(data, &next_x_ray);
+	normalize_vec_to_map(data, &next_y_ray);
+	dist_x = distance(&(data->ray.player_pos), &next_x_ray);
+	dist_y = distance(&(data->ray.player_pos), &next_y_ray);
+	if (dist_x < dist_y)
+	{
+		vec_copy(next_x_ray, &(data->ray.cur_pos));
+		vec_copy(next_x_ray, &(data->ray.cur_x_ray));
+	}
+	else
+	{
+		vec_copy(next_y_ray, &(data->ray.cur_pos));
+		vec_copy(next_y_ray, &(data->ray.cur_y_ray));
+	}
+}
+
+void draw_line(t_data *data, int x1, int y1, int x2, int y2, int color) {
+    int dx = abs(x2 - x1);
+    int dy = abs(y2 - y1);
+    int sx, sy;
+
+    if (x1 < x2) {
+        sx = 1;
+    } else {
+        sx = -1;
+    }
+
+    if (y1 < y2) {
+        sy = 1;
+    } else {
+        sy = -1;
+    }
+
+    int err = dx - dy;
+
+    while (1) {
+		if (x1 < 0 || x1 >= WIN_WIDTH || y1 < 0 || y1 >= WIN_WIDTH)
+			return ;
+		mlx_put_pixel(data->mlx_img, x1, y1, color);
+
+        if (x1 == x2 && y1 == y2) {
+            break;
+        }
+
+        int e2 = 2 * err;
+        if (e2 > -dy) {
+            err -= dy;
+            x1 += sx;
+        }
+        if (e2 < dx) {
+            err += dx;
+            y1 += sy;
+        }
+    }
+}
+
+
+
+void draw_line_c(t_data *data, int start_x, int start_y, int length, double angle_rad, int color) {
+    //double angle_rad = line_angle * M_PI / 180.0; // Convert angle to radians
+    int end_x = start_x + length * cos(angle_rad);
+    int end_y = start_y + length * sin(angle_rad);
+
+    int dx = abs(end_x - start_x);
+    int dy = abs(end_y - start_y);
+    int sx, sy;
+
+    if (start_x < end_x) {
+        sx = 1;
+    } else {
+        sx = -1;
+    }
+
+    if (start_y < end_y) {
+        sy = 1;
+    } else {
+        sy = -1;
+    }
+
+    int err = dx - dy;
+
+    while (1) {
+        if (start_x < 0 || start_x >= WIN_WIDTH || start_y < 0 || start_y >= WIN_WIDTH)
+				return ;
+		mlx_put_pixel(data->mlx_img, start_x, start_y, color);
+
+        if (start_x == end_x && start_y == end_y) {
+            break;
+        }
+
+        int e2 = 2 * err;
+        if (e2 > -dy) {
+            err -= dy;
+            start_x += sx;
+        }
+        if (e2 < dx) {
+            err += dx;
+            start_y += sy;
+        }
+    }
+}
 int32_t get_color(t_data *data, int x, int y)
 {
 	(void)data;
@@ -50,6 +211,8 @@ void	draw_rect(t_data *data, int x, int y)
 		x = tmpx;
 		while (x < data->rect.dx)
 		{
+			if (x < 0 || x >= WIN_WIDTH || y < 0 || y >= WIN_WIDTH)
+				return ;
 			mlx_put_pixel(data->mlx_img, x, y, cur_col);
 			x++;
 		}
@@ -201,15 +364,29 @@ int	closest_int(double f)
 	return (i);
 }
 
+void	calculate_map_block(t_data *data, t_vec *point, int *x, int *y)
+{
+	(void)data;
+	(void)point;
+	(void)x;
+	(void)y;
+	
+	return ;
+}
+
 int	is_solid(t_data *data, t_vec *point)
 {
 	int	x;
 	int	y;
-	x = closest_int(point->x);
-	y = closest_int(point->y);
-	//printf("Checking if solid: (%lf, %lf)->(%d, %d), when map dimensions: %d, %d\n", \
-	// point->x, point->y, x, y, \
-	// data->map_w, data->map_h);
+	return (1);
+	// x = closest_int(point->x);
+	// y = closest_int(point->y);
+	x = (int)point->x;
+	y = (int)point->y;
+	//calculate_map_block(data, point, &x, &y);
+	printf("Checking if solid: (%lf, %lf)->(%d, %d), when map dimensions: %d, %d\n", \
+	point->x, point->y, x, y, \
+	data->map_w, data->map_h);
 
 	// if(x <= 0 || x >= data->map_w - 1 || y <= 0 || y >= data->map_h - 1)
 	// 	printf("Ray got out of the borders of the map !!!\n");
@@ -218,77 +395,29 @@ int	is_solid(t_data *data, t_vec *point)
 	return(0);
 }
 
-double	distance(t_vec *v1, t_vec *v2)
-{
-	double	dx;
-	double	dy;
 
-	dx = v1->x - v2->x;
-	dy = v1->y - v2->y;
-	// printf("Calculating distance. (%f, %f) and (%f, %f)\n", v1->x, v1->y, v2->x, v2->y);
-	// printf("dx and dy = %lf, %lf\n", dx, dy);
-	return (sqrt(dx * dx + dy * dy));
+double	get_dx(t_data *data)
+{
+	if (data->ray.dir_vec.x > 0)
+		return (1 - ft_modf(data->player.x));
+	else
+		return (-ft_modf(data->player.x));
 }
 
-double	vec_len(t_vec *vector)
+double	get_dy(t_data *data)
 {
-	return (sqrt((vector->x * vector->x) + (vector->y * vector->y)));
-}
-
-double	ft_modf(double d)
-{
-	double	tmp;
-	double	res;
-
-	res = modf(d, &tmp);
-	return (res);
-}
-void	vec_copy(t_vec src, t_vec *dst)
-{
-	dst->x = src.x;
-	dst->y = src.y;
-	dst->theta = src.theta;
-	dst->triangle_angle = src.triangle_angle;
-}
-void	calc_first_collisions(t_data *data)
-{
-	if ((data->ray.abs_ang > M_PI - EPS && data->ray.abs_ang < M_PI + EPS) || \
-		((data->ray.abs_ang < EPS && data->ray.abs_ang > -EPS)))
-		data->ray.x_step_vec.x = 0;
-	else if (data->ray.abs_ang > PI1_2 && data->ray.abs_ang < PI3_2)
-		data->ray.x_step_vec.x =  ft_modf(data->player.x);
-	else 
-		data->ray.x_step_vec.x = 1 - ft_modf(data->player.x);
-	data->ray.x_step_vec.y = data->ray.x_step_vec.x * cos(data->ray.abs_ang);
-	if ((data->ray.abs_ang > PI1_2 - EPS && data->ray.abs_ang < PI1_2 + EPS) || \
-		((data->ray.abs_ang < PI3_2 + EPS && data->ray.abs_ang >PI3_2 - EPS)))
-		data->ray.x_step_vec.y = 0;
-	else if (data->ray.abs_ang > PI1_2 && data->ray.abs_ang < PI3_2)
-		data->ray.y_step_vec.y =  ft_modf(data->player.y);
-	else 
-		data->ray.y_step_vec.y = 1 - ft_modf(data->player.y);
-	data->ray.y_step_vec.x = data->ray.y_step_vec.y * cos(data->ray.abs_ang);
-	if (vec_len(&(data->ray.x_step_vec)) < vec_len(&(data->ray.y_step_vec)))
-	{
-		data->ray.cur_pos.x =  data->player.x + data->ray.x_step_vec.x;
-		data->ray.cur_pos.y =  data->player.x + data->ray.x_step_vec.y;
-		return ;
-	}
-	data->ray.cur_pos.x = data->player.x + data->ray.y_step_vec.x;
-	data->ray.cur_pos.y = data->player.y + data->ray.y_step_vec.y;
-	vec_copy(data->ray.cur_pos, &(data->ray.cur_x_ray));
-	vec_copy(data->ray.cur_pos, &(data->ray.cur_y_ray));
+	if (data->ray.dir_vec.y > 0)
+		return (1 - ft_modf(data->player.y));
+	else
+		return (-ft_modf(data->player.y));
 }
 
 void	calc_step_lengths(t_data *data)
 {
-	//we have data->ray.cur_pos for the current position.
-	//we have angle so we can calculate using cos() or something,
-	//what will dx/dy be for both of the casts
 	data->ray.x_step_vec.x = data->ray.dir_vec.x;
-	data->ray.x_step_vec.y = tan(data->ray.dir_vec.triangle_angle) * data->ray.dir_vec.x;
+	data->ray.x_step_vec.y = tan(data->ray.dir_vec.triangle_angle) * data->ray.dir_vec.y;
 	data->ray.y_step_vec.y = data->ray.dir_vec.y;
-	data->ray.y_step_vec.x = tan(data->ray.dir_vec.triangle_angle) * data->ray.dir_vec.y;
+	data->ray.y_step_vec.x = tan(data->ray.dir_vec.triangle_angle) * data->ray.dir_vec.x;
 }
 
 void	save_quarter(t_data *data)
@@ -297,62 +426,19 @@ void	save_quarter(t_data *data)
 
 	a = data->ray.abs_ang;
 	if (a > 0.0 && a < M_PI)
-		data->ray.dir_vec.y = -1;
-	else
 		data->ray.dir_vec.y = 1;
-	if (a > 0.0 && a < M_PI)
-		data->ray.dir_vec.x = -1;
 	else
+		data->ray.dir_vec.y = -1;
+	if (a > PI1_2 && a < PI3_2)
 		data->ray.dir_vec.x = 1;
-	data->ray.dir_vec.theta = data->ray.abs_ang;
-	calc_triangle_angle(&(data->ray.dir_vec));
-	data->ray.cur_pos.theta = data->ray.dir_vec.theta;
-	data->ray.cur_pos.triangle_angle = data->ray.dir_vec.triangle_angle;
-}
-
-//ASSUMIG ANGLES ARE THE SAME!!!
-void	vec_write_sum_parallel(t_vec *dst, t_vec arg1, t_vec arg2)
-{
-	dst->x = arg1.x + arg2.x;
-	dst->y = arg1.y + arg2.y;
-}
-
-void	normalize_vec_to_map(t_data *data, t_vec *vec)
-{
-	if (vec->x < 1)
-		vec->x = 1;
-	if (vec->x >= data->map_w)
-		vec->x = data->map_w - 1;
-	if (vec->y < 1)
-		vec->y = 1;
-	if (vec->y >= data->map_h)
-		vec->y = data->map_h - 1;
-}
-
-void	ray_step(t_data *data)
-{
-	t_vec	next_x_ray;
-	t_vec	next_y_ray;
-	double	dist_x;
-	double	dist_y;
-
-	vec_write_sum_parallel(&next_x_ray, data->ray.cur_x_ray, data->ray.x_step_vec);
-	vec_write_sum_parallel(&next_y_ray, data->ray.cur_y_ray, data->ray.y_step_vec);
-	normalize_vec_to_map(data, &next_x_ray);
-	normalize_vec_to_map(data, &next_y_ray);
-	dist_x = distance(&(data->ray.player_pos), &next_x_ray);
-	dist_y = distance(&(data->ray.player_pos), &next_y_ray);
-	if (dist_x < dist_y)
-	{
-		vec_copy(next_x_ray, &(data->ray.cur_pos));
-		vec_copy(next_x_ray, &(data->ray.cur_x_ray));
-	}
 	else
-	{
-		vec_copy(next_y_ray, &(data->ray.cur_pos));
-		vec_copy(next_y_ray, &(data->ray.cur_y_ray));
-	}
+		data->ray.dir_vec.x = -1;
+	// data->ray.dir_vec.theta = data->ray.abs_ang;
+	// calc_triangle_angle(&(data->ray.dir_vec));
+	// data->ray.cur_pos.theta = data->ray.dir_vec.theta;
+	// data->ray.cur_pos.triangle_angle = data->ray.dir_vec.triangle_angle;
 }
+
 
 void	get_line_height(t_data *data)
 {
@@ -361,7 +447,13 @@ void	get_line_height(t_data *data)
 	int	line_end;
 	double	ray_len;
 
+	//формула - гипотенуза на косинус прилежащего угла = катет
+	//hypotenuse = ray_len
+	//прилежащий угол это rel_ang (relative angle)
+	//Косинус надо бы потом прекалькулейтиь
+
 	ray_len = distance(&(data->ray.player_pos), &(data->ray.cur_pos));
+	ray_len *= ft_abs(cos(data->ray.rel_ang));
 	// printf("ray len = %f\n", ray_len);
 	wall_height = ((double)WIN_HEIGHT / ray_len);
 	line_start = (-wall_height / 2) + (WIN_HEIGHT / 2);
@@ -375,19 +467,80 @@ void	get_line_height(t_data *data)
 	
 }
 
+
+void	render_ray2d(t_data *data)
+{
+	// int	x = WIN_WIDTH / 2 - (data->map_w + data->player.x) * SCALE_2D;
+	// int	y = WIN_HEIGHT/ 2 - (data->map_h + data->player.y) * SCALE_2D;
+	int	x = (data->player.x) * SCALE_2D;
+	int	y = (data->player.y) * SCALE_2D;
+	int	x2 = (data->ray.cur_pos.x) * SCALE_2D;
+	int	y2 = (data->ray.cur_pos.y) * SCALE_2D;
+	//int	ray_len = distance(&(data->ray.player_pos), &(data->ray.cur_pos)) * SCALE_2D;
+	//ray_len *= ft_abs(cos(data->ray.rel_ang));
+	printf("(%f)\n", data->ray.abs_ang);
+	//draw_line_c(data, x, y, ray_len, data->ray.abs_ang, 0xFF28F11F);
+	draw_line(data, x, y, x2, y2, 0xFF28F11F);
+	
+}
+
+// void	showlines(t_data *data)
+// {
+// 	int	x = WIN_WIDTH / 2 - (data->map_w + data->player.x) * SCALE_2D;
+// 	int	y = WIN_HEIGHT/ 2 - (data->map_h + data->player.y) * SCALE_2D;
+// 	int	x2 = 
+// 	int	
+// 	int	ray_len = distance(&(data->ray.player_pos), &(data->ray.cur_pos)) * SCALE_2D;
+// 	ray_len *= ft_abs(cos(data->ray.rel_ang));
+// 	printf("(%d, %d) %d\n", x, y, ray_len);
+// 	draw_line_c(data, x, y, ray_len, M_PI/2, 0xFF28F11F);
+// }
+
+
+void	calc_first_collisions(t_data *data)
+{
+	double aTan = -1/tan(data->ray.abs_ang);
+	if (data->ray.abs_ang > M_PI && data->ray.abs_ang < M_PI * 2)
+	{
+		data->ray.cur_pos.y = (int)data->player.y;
+		data->ray.cur_pos.x = data->player.y - data->ray.cur_pos.y * aTan + data->player.x;
+	}
+	else if (data->ray.abs_ang < M_PI && data->ray.abs_ang > 0)
+	{
+		data->ray.cur_pos.y = ceil(data->player.y);
+		data->ray.cur_pos.x = data->player.y + data->ray.cur_pos.y * aTan + data->player.x;
+	}
+	else
+	{
+		data->ray.cur_pos.y = data->player.y;
+		data->ray.cur_pos.x = data->player.x;
+	}
+	
+}
+
+
 void	cast_one_ray(t_data *data)
 {
 	save_quarter(data);
+	// calc_step_lengths(data);
 	calc_first_collisions(data);
-	calc_step_lengths(data);
 	//printf("after pre-step cur pos = %f, %f\n", data->ray.cur_pos.x, data->ray.cur_pos.y);
-	while (!is_solid(data, &(data->ray.cur_pos)))
-	{
-		ray_step(data);
-	}
+	// while (!is_solid(data, &(data->ray.cur_pos)))
+	// {
+	// 	ray_step(data);
+	// }
 	printf("calculated ray end: (%f, %f)\n", data->ray.cur_pos.x, data->ray.cur_pos.y);
 	get_line_height(data);
-	render_ray(data, data->ray.win_x, data->ray.wall_top, data->ray.wall_bot, 0x00);
+	render_ray2d(data);
+	//showlines(data);
+	//render_ray(data, data->ray.win_x, data->ray.wall_top, data->ray.wall_bot, 0x00);
+}
+
+double	get_trian_ang(double ang)
+{
+	while (ang > PI1_2)
+		ang -= PI1_2;
+	return (ang);
 }
 
 void	cast_rays(t_data *data)
@@ -395,25 +548,38 @@ void	cast_rays(t_data *data)
 	data->ray.win_x = 0;
 	data->ray.abs_ang = data->player.theta - FOV_HALFANGLE;
 	data->ray.rel_ang = -FOV_HALFANGLE;
+	data->ray.tr_ang = get_trian_ang(data->ray.abs_ang);
 	data->ray.player_pos.x = data->player.x;
 	data->ray.player_pos.y = data->player.y;
 	data->ray.player_pos.theta = data->player.theta;
-	while (data->ray.win_x < WIN_WIDTH - 10)
+	while (data->ray.win_x < WIN_WIDTH - 1)
 	{
 		cast_one_ray(data);
 		data->ray.abs_ang += ANGLE_STEP;
 		data->ray.rel_ang += ANGLE_STEP;
-		data->ray.win_x++;
+		data->ray.tr_ang += ANGLE_STEP;
+		data->ray.tr_ang = get_trian_ang(data->ray.tr_ang);
+		data->ray.win_x += 1;
 	}
+	draw_line_c(data, data->player.x * SCALE_2D, data->player.y * SCALE_2D, 400, data->player.theta + M_PI, 0xFF1F1FF1);
 	ft_printf("all rays cast\n");
 }
 
 void	drawscreen(void *ptr){
 	t_data	*data = (t_data *)ptr;
-	
+	for(int i = 0; i < WIN_WIDTH; i++)
+	{
+		verLine(data, i, 0, WIN_HEIGHT - 1, 0x0);
+	}
+	draw_minimap(data);
 	cast_rays(data);
 	// printf("Rendered screen!\n");
-	//draw_minimap(data);
+
+	draw_line(data, 400, 400, 800, 100, 0x11FFFF);
+	draw_line(data, 400, 400, 400, 800, 0x11FFFF);
+	draw_line(data, 800, 800, 800, 400, 0x11FFFF);
+	draw_line(data, 800, 800, 400, 800, 0x11FFFF);
+	
 	mlx_image_to_window(data->mlx_win, data->mlx_img, 0, 0);
 }
 
