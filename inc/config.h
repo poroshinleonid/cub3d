@@ -6,7 +6,7 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/25 17:13:01 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/02/27 17:29:10 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/02/28 11:51:39 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,11 @@
 
 # define EPS 0.000001
 # define INF 10000000000.0
+
+# define PI1_2 1.57079632679
+# define PI1_3 1.0471975512
+
+# define PI3_2 4.71238898038
 
 # define WIN_WIDTH	1920
 # define WIN_WIDTH_DO 1920.0
@@ -32,6 +37,10 @@
 
 # define PI 3.14159265359
 
-# define FOV_ANGLE 1.0472
+# define FOV_ANGLE 1.0471975512
+# define FOV_HALFANGLE 0.523599
+// ANGLE_STEP = (FOV_ANGLE / WIN_WIDTH) 
+// Needs recalculation when changing FOV!
+# define ANGLE_STEP 0.00096962736
 
 #endif

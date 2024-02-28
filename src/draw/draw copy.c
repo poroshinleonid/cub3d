@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   draw.c                                             :+:      :+:    :+:   */
+/*   draw copy.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/25 16:25:31 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/02/28 12:42:42 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/02/28 11:40:28 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,12 +109,6 @@ void	render_ray(t_data *data, int x, int wall_start, int wall_end, uint32_t colo
 	verLine(data, x, wall_end, WIN_HEIGHT - 1, 0x11FFFF);
 }
 
-void	calc_triangle_angle(t_vec *vector)
-{
-	vector->triangle_angle = vector->theta;
-	while (vector->triangle_angle > PI/2 + EPS)
-		vector->triangle_angle -= PI/2;
-}
 
 //The vector is normalized by default!
 void	ang_to_vec(double angle, t_vec *vector)
@@ -230,89 +224,65 @@ double	distance(t_vec *v1, t_vec *v2)
 	return (sqrt(dx * dx + dy * dy));
 }
 
-double	vec_len(t_vec *vector)
+t_vec	*first_collision(t_vec *dir_vector, t_vec start_pos)
 {
-	return (sqrt((vector->x * vector->x) + (vector->y * vector->y)));
+	
 }
 
-double	ft_modf(double d)
+void	cast_one_ray(t_data *data, double cur_ang, int cur_x)
 {
-	double	tmp;
-	double	res;
+	t_vec	ray_vec;
+	t_vec 	*next_intersection_v;
+	int		hit;
 
-	res = modf(d, &tmp);
-	return (res);
-}
-
-void	calc_first_collisions(t_data *data)
-{
-	if ((data->ray.abs_ang > M_PI - EPS && data->ray.abs_ang < M_PI + EPS) || \
-		((data->ray.abs_ang < EPS && data->ray.abs_ang > -EPS)))
-		data->ray.x_step_vec.x = 0;
-	else if (data->ray.abs_ang > PI1_2 && data->ray.abs_ang < PI3_2)
-		data->ray.x_step_vec.x =  ft_modf(data->player.x);
-	else 
-		data->ray.x_step_vec.x = 1 - ft_modf(data->player.x);
-	data->ray.x_step_vec.y = data->ray.x_step_vec.x * cos(data->ray.abs_ang);
-	if ((data->ray.abs_ang > PI1_2 - EPS && data->ray.abs_ang < PI1_2 + EPS) || \
-		((data->ray.abs_ang < PI3_2 + EPS && data->ray.abs_ang >PI3_2 - EPS)))
-		data->ray.x_step_vec.y = 0;
-	else if (data->ray.abs_ang > PI1_2 && data->ray.abs_ang < PI3_2)
-		data->ray.y_step_vec.y =  ft_modf(data->player.y);
-	else 
-		data->ray.y_step_vec.y = 1 - ft_modf(data->player.y);
-	data->ray.y_step_vec.x = data->ray.y_step_vec.y * cos(data->ray.abs_ang);
-	if (vec_len(&(data->ray.x_step_vec)) < vec_len(&(data->ray.y_step_vec)))
+	hit = 0;
+	ang_to_vec(cur_ang, &ray_vec);
+	t_vec	player_pos;
+	player_pos.x = data->player.x;
+	player_pos.y = data->player.y;
+	player_pos.theta = data->player.theta;
+	t_vec	cur_ray_pos;
+	cur_ray_pos.x = data->player.x;
+	cur_ray_pos.y = data->player.y;
+	t_vec	signs;
+	signs.x = (ray_vec.x > 0)?(1):(-1);
+	signs.y = (ray_vec.y > 0)?(1):(-1);
+	while (!hit)
 	{
-		data->ray.cur_pos.x = data->ray.x_step_vec.x;
-		data->ray.cur_pos.y = data->ray.x_step_vec.y;
-		return ;
+		// printf("rc_step from %f, %f; ray_vec = %f,%f\n",
+			// cur_ray_pos.x, cur_ray_pos.y, ray_vec.x, ray_vec.y);
+		next_intersection_v = get_next_point(data, ray_vec, cur_ray_pos, signs);
+		cur_ray_pos.x = next_intersection_v->x;
+		cur_ray_pos.y = next_intersection_v->y;
+		if (is_solid(data, next_intersection_v))
+			hit = 1;
 	}
-	data->ray.cur_pos.x = data->ray.y_step_vec.x;
-	data->ray.cur_pos.y = data->ray.y_step_vec.y;
-}
-
-void	calc_step_lengths(t_data *data)
-{
-	//we have data->ray.cur_pos for the current position.
-	//we have angle so we can calculate using cos() or something,
-	//what will dx/dy be for both of the casts
-	data->ray.x_step_vec.x = data->ray.dir_vec.x;
-	data->ray.x_step_vec.y = tan(data->ray.dir_vec.triangle_angle) * data->ray.dir_vec.x;
-	data->ray.y_step_vec.y = data->ray.dir_vec.y;
-	data->ray.y_step_vec.x = tan(data->ray.dir_vec.triangle_angle) * data->ray.dir_vec.y;
-}
-
-void	save_quarter(t_data *data)
-{
-	double	a;
-
-	a = data->ray.abs_ang;
-	if (a > 0.0 && a < M_PI)
-		data->ray.dir_vec.y = -1;
-	else
-		data->ray.dir_vec.y = 1;
-	if (a > 0.0 && a < M_PI)
-		data->ray.dir_vec.x = -1;
-	else
-		data->ray.dir_vec.x = 1;
-	data->ray.dir_vec.theta = data->ray.abs_ang;
-	calc_triangle_angle(&(data->ray.dir_vec));
-}
-
-void	cast_one_ray(t_data *data)
-{
-	save_quarter(data);
-	calc_first_collisions(data);
-	calc_step_lengths(data);
-	while (!is_solid(data, &(data->ray.cur_pos)))
-	{
-		// aaaaaa
-		// do we need to store xray and yray separately?
-		//Do we increment them in one cycle idk aaa
-	}
-	//get_line_height(data);
-	//render_ray(data, cur_x, data->ray.wall_top, data->ray.wall_bot, 0x00);
+	double	ray_len = distance(&player_pos, next_intersection_v);
+	//hypotenuse = ray_len
+	//angle = angle
+	//therefore, perpendicular distance = hypotenuse_len * sin(angle) or *cos(angle)
+	// printf("Wrayy len1   = %f, cos = %f\n", ray_len, 110.0);
+	// if(cos(cur_ang - data->player.theta) != 0.0)
+	// 	ray_len = ft_abs(ray_len * ft_abs(cos(cur_ang - data->player.theta)));
+	
+	// printf("Wrayy len2   = %f\n", ray_len);
+	//height 1 -> 
+	//int		height = ray_len * tan(FOV_ANGLE);
+	// int	wall_line_height = ((double)WIN_HEIGHT / ray_len) / 2.0;
+	int	wall_line_height = ((double)WIN_HEIGHT / ray_len);
+	// printf("wall line len   = %d\n", wall_line_height);
+	int	line_start = (-wall_line_height / 2) + (WIN_HEIGHT / 2);
+	if (line_start < 0)
+		line_start = 0;
+	int	line_end = (wall_line_height / 2) + (WIN_HEIGHT / 2);
+	if (line_end >= WIN_HEIGHT)
+		line_end = WIN_HEIGHT - 1;
+	render_ray(data, cur_x, line_start, line_end, 0x00);
+	// Here we have next_intersection_v containing a point, and we know that this point is solid
+	// Now we calculate the length of this vector,
+	// from it determine the length of the line we need to draw on the screen
+	// And normalize the line etc etc
+	// And draw the line and floor and sky
 }
 
 void	cast_rays(t_data *data)
@@ -321,12 +291,11 @@ void	cast_rays(t_data *data)
 	
 	cur_x = 0;
 	data->ray.abs_ang = data->player.theta - FOV_HALFANGLE;
-	data->ray.rel_ang = -FOV_HALFANGLE;
 	while (cur_x < WIN_WIDTH - 10)
 	{
-		cast_one_ray(data);
+		// ft_printf("casting ray on x=%d\n", cur_x);
+		cast_one_ray(data, data->ray.abs_ang, cur_x);
 		data->ray.abs_ang += ANGLE_STEP;
-		data->ray.rel_ang += ANGLE_STEP;
 		cur_x++;
 	}
 	// ft_printf("all rays cast\n");

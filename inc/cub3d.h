@@ -6,7 +6,7 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 17:35:05 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/02/27 15:48:16 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/02/28 12:04:27 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,25 @@ typedef struct s_vec {
 	double	triangle_angle;
 }	t_vec;
 
+typedef struct s_ray {
+	int		win_x;
+	int		wall_top;
+	int		wall_bot;
+	double	abs_ang;
+	double	rel_ang;
+	t_vec	cur_pos;
+	t_vec	dir_vec;
+	t_vec	step_vec;
+	t_vec	x_step_vec;
+	t_vec	y_step_vec;
+}	t_ray;
+
 typedef struct s_entity {
-	float	x;
-	float	y;
-	float	theta;
-	float	dx;
-	float	dy;
+	double	x;
+	double	y;
+	double	theta;
+	double	dx;
+	double	dy;
 }	t_entity;
 
 typedef struct s_textures {
@@ -80,6 +93,7 @@ typedef struct s_data {
 	t_textures textures;
 	t_texture_names texture_names;
 	t_rect		rect;
+	t_ray		ray;
 }	t_data;
 
 # define ER_FATAL -1
