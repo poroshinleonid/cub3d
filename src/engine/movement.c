@@ -66,11 +66,18 @@ void movement_hook(t_data *data) {
     data->player.y += dy;
 }
 
+static void exit_hook(t_data* data) {
+    if (mlx_is_key_down(data->mlx_win, MLX_KEY_ESCAPE)) {
+        terminate(data, "Finished");
+    }
+}
+
 void ft_hook(void *param) {
     t_data *data;
 
     data = param;
     movement_hook(data);
     rotation_hook(data);
+    exit_hook(data);
     printf("%f %f %f %f %f\n", data->player.x, data->player.y, data->player.theta, data->player.dx, data->player.dy);
 }
