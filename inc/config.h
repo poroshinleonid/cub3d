@@ -6,7 +6,7 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/25 17:13:01 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/02/28 17:54:58 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/02/29 14:16:54 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,8 @@
 
 # define MAP_CHARSET "01NSWE"
 # define MAP_PLAYER_CHARSET "NSWE"
-# define TILE_SZ 50
-# define SCALE_2D 50
+# define TILE_SZ 100
+# define SCALE_2D 100
 # define TILE_BORDER_SZ 1
 
 # define PL_SPEED_SCALE 0.1

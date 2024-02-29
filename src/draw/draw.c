@@ -6,7 +6,7 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/25 16:25:31 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/02/28 18:50:31 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/02/29 14:27:32 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -226,10 +226,10 @@ void	draw_minimap(t_data *data)
 	int	y;
 
 	y = 0;
-	while (y < 21)
+	while (y < 6)
 	{
 		x = 0;
-		while (x < 21)
+		while (x < 6)
 		{
 			data->rect.mapx = x;
 			data->rect.mapy = y;
@@ -412,12 +412,31 @@ double	get_dy(t_data *data)
 		return (-ft_modf(data->player.y));
 }
 
+int	ft_double_eq(double a, double b)
+{
+	if (a - b > -EPS && a - b < EPS)
+		return (1);
+	return (0);
+}
+
 void	calc_step_lengths(t_data *data)
 {
+	printf("dir_vecs: x[%f] y[%f]\n", data->ray.dir_vec.x, data->ray.dir_vec.y);
+	printf("triangle: (%f)\n", data->ray.tr_ang);
+	
 	data->ray.x_step_vec.x = data->ray.dir_vec.x;
-	data->ray.x_step_vec.y = tan(data->ray.dir_vec.triangle_angle) * data->ray.dir_vec.y;
+	if (ft_double_eq(data->ray.tr_ang, PI1_2))
+		data->ray.x_step_vec.y = 0;
+	else
+		data->ray.x_step_vec.y = tan(ft_abs(data->ray.tr_ang)) * data->ray.dir_vec.y;
+	
+	
 	data->ray.y_step_vec.y = data->ray.dir_vec.y;
-	data->ray.y_step_vec.x = tan(data->ray.dir_vec.triangle_angle) * data->ray.dir_vec.x;
+	if (ft_double_eq(data->ray.tr_ang, PI1_2))
+		data->ray.y_step_vec.x = 0;
+	else
+		data->ray.y_step_vec.x = tan(ft_abs(data->ray.tr_ang)) * data->ray.dir_vec.x;
+	printf("Step_lengths: x[%f] y[%f]\n", data->ray.x_step_vec.y, data->ray.y_step_vec.x);
 }
 
 void	save_quarter(t_data *data)
@@ -474,14 +493,14 @@ void	render_ray2d(t_data *data)
 	// int	y = WIN_HEIGHT/ 2 - (data->map_h + data->player.y) * SCALE_2D;
 	int	x = (data->player.x) * SCALE_2D;
 	int	y = (data->player.y) * SCALE_2D;
-	int	x2 = (data->ray.cur_pos.x) * SCALE_2D;
-	int	y2 = (data->ray.cur_pos.y) * SCALE_2D;
-	//int	ray_len = distance(&(data->ray.player_pos), &(data->ray.cur_pos)) * SCALE_2D;
-	//ray_len *= ft_abs(cos(data->ray.rel_ang));
-	printf("(%f)\n", data->ray.abs_ang);
-	//draw_line_c(data, x, y, ray_len, data->ray.abs_ang, 0xFF28F11F);
-	draw_line(data, x, y, x2, y2, 0xFF28F11F);
 	
+	int	x2 = (data->player.x + data->ray.x_step_vec.x) * SCALE_2D;
+	int	y2 = (data->player.x + data->ray.x_step_vec.y) * SCALE_2D;
+	draw_line(data, x, y, x2, y2, 0xFF28F11F);
+
+	x2 = (data->player.x + data->ray.y_step_vec.x) * SCALE_2D;
+	y2 = (data->player.x + data->ray.y_step_vec.y) * SCALE_2D;
+	draw_line(data, x + 1, y + 1, x2 + 1, y2 + 1, 0xFFB3041F);
 }
 
 // void	showlines(t_data *data)
@@ -522,14 +541,14 @@ void	calc_first_collisions(t_data *data)
 void	cast_one_ray(t_data *data)
 {
 	save_quarter(data);
-	// calc_step_lengths(data);
+	calc_step_lengths(data);
 	calc_first_collisions(data);
 	//printf("after pre-step cur pos = %f, %f\n", data->ray.cur_pos.x, data->ray.cur_pos.y);
 	// while (!is_solid(data, &(data->ray.cur_pos)))
 	// {
 	// 	ray_step(data);
 	// }
-	printf("calculated ray end: (%f, %f)\n", data->ray.cur_pos.x, data->ray.cur_pos.y);
+	//printf("calculated ray end: (%f, %f)\n", data->ray.cur_pos.x, data->ray.cur_pos.y);
 	get_line_height(data);
 	render_ray2d(data);
 	//showlines(data);
@@ -561,7 +580,7 @@ void	cast_rays(t_data *data)
 		data->ray.tr_ang = get_trian_ang(data->ray.tr_ang);
 		data->ray.win_x += 1;
 	}
-	draw_line_c(data, data->player.x * SCALE_2D, data->player.y * SCALE_2D, 400, data->player.theta + M_PI, 0xFF1F1FF1);
+	//draw_line_c(data, data->player.x * SCALE_2D, data->player.y * SCALE_2D, 400, data->player.theta + M_PI, 0xFF1F1FF1);
 	ft_printf("all rays cast\n");
 }
 
@@ -575,10 +594,10 @@ void	drawscreen(void *ptr){
 	cast_rays(data);
 	// printf("Rendered screen!\n");
 
-	draw_line(data, 400, 400, 800, 100, 0x11FFFF);
-	draw_line(data, 400, 400, 400, 800, 0x11FFFF);
-	draw_line(data, 800, 800, 800, 400, 0x11FFFF);
-	draw_line(data, 800, 800, 400, 800, 0x11FFFF);
+	// draw_line(data, 400, 400, 800, 100, 0x11FFFF);
+	// draw_line(data, 400, 400, 400, 800, 0x11FFFF);
+	// draw_line(data, 800, 800, 800, 400, 0x11FFFF);
+	// draw_line(data, 800, 800, 400, 800, 0x11FFFF);
 	
 	mlx_image_to_window(data->mlx_win, data->mlx_img, 0, 0);
 }
