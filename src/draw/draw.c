@@ -6,7 +6,7 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/25 16:25:31 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/02/29 15:50:45 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/02/29 18:19:44 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,16 @@
 #include "engine.h"
 #include <math.h>
 
+int	ft_double_eq(double a, double b)
+{
+	double	diff;
+
+	diff = a - b;
+	if (diff > -EPS && diff < EPS)
+		return (1);
+	return (0);
+}
+
 void	vec_copy(t_vec src, t_vec *dst)
 {
 	dst->x = src.x;
@@ -23,21 +33,23 @@ void	vec_copy(t_vec src, t_vec *dst)
 	dst->theta = src.theta;
 	dst->triangle_angle = src.triangle_angle;
 }
-
+double	vec_len(t_vec *vector)
+{
+	return (sqrt((vector->x * vector->x) + (vector->y * vector->y)));
+}
 double	distance(t_vec *v1, t_vec *v2)
 {
 	double	dx;
 	double	dy;
-
+	
+	if (v1 == NULL)
+		return (vec_len(v2));
 	dx = v1->x - v2->x;
 	dy = v1->y - v2->y;
 	return (sqrt(dx * dx + dy * dy));
 }
 
-double	vec_len(t_vec *vector)
-{
-	return (sqrt((vector->x * vector->x) + (vector->y * vector->y)));
-}
+
 
 double	ft_modf(double d)
 {
@@ -76,10 +88,10 @@ void	ray_step(t_data *data)
 	//
 	vec_write_sum_parallel(&next_x_ray, data->ray.cur_x_ray, data->ray.x_step_vec);
 	vec_write_sum_parallel(&next_y_ray, data->ray.cur_y_ray, data->ray.y_step_vec);
-	normalize_vec_to_map(data, &next_x_ray);
-	normalize_vec_to_map(data, &next_y_ray);
-	dist_x = distance(&(data->ray.player_pos), &next_x_ray);
-	dist_y = distance(&(data->ray.player_pos), &next_y_ray);
+	// normalize_vec_to_map(data, &next_x_ray);
+	// normalize_vec_to_map(data, &next_y_ray);
+	dist_x = vec_len(&next_x_ray);
+	dist_y = vec_len(&next_y_ray);
 	if (dist_x < dist_y)
 	{
 		vec_copy(next_x_ray, &(data->ray.cur_pos));
@@ -211,7 +223,7 @@ void	draw_rect(t_data *data, int x, int y)
 		x = tmpx;
 		while (x < data->rect.dx)
 		{
-			if (x < 0 || x >= WIN_WIDTH || y < 0 || y >= WIN_WIDTH)
+			if (x < 0 || x >= WIN_WIDTH || y < 0 || y >= WIN_HEIGHT)
 				return ;
 			mlx_put_pixel(data->mlx_img, x, y, cur_col);
 			x++;
@@ -226,10 +238,10 @@ void	draw_minimap(t_data *data)
 	int	y;
 
 	y = 0;
-	while (y < 6)
+	while (y < data->map_w)
 	{
 		x = 0;
-		while (x < 6)
+		while (x < data->map_h)
 		{
 			data->rect.mapx = x;
 			data->rect.mapy = y;
@@ -244,9 +256,9 @@ void	draw_minimap(t_data *data)
 
 double	ft_abs(double num)
 {
-	if (num == -0.0)
+	if (num == -0.0 || num == 0.0)
 		return (0.0);
-	if (num < 0.000)
+	if (num < 0.000 - EPS)
 		return (num * -1.0 + 0.000000001);
 	return (num);
 }
@@ -371,27 +383,48 @@ void	calculate_map_block(t_data *data, t_vec *point, int *x, int *y)
 	(void)x;
 	(void)y;
 	
+	
 	return ;
 }
 
+
 int	is_solid(t_data *data, t_vec *point)
 {
+	
+	double	x_double = data->player.x + point->x;
+	double	y_double = data->player.y + point->y;
 	int	x;
 	int	y;
-	return (1);
-	// x = closest_int(point->x);
-	// y = closest_int(point->y);
-	x = (int)point->x;
-	y = (int)point->y;
+	x = (int)round(x_double);
+	y = (int)round(y_double);
+	printf("%f %f\n", round(x_double), round(y_double));
+	if (x <= 1 || x >= data->map_w - 1 || y <= 1 || y >= data->map_h - 1)
+	{
+		write(1, "E", 1);
+		return (1);
+	}
+	if (ft_double_eq(x_double, x))
+	{
+		// if dir is elft, check lesser grid (-1)
+		// if dir is right, check grid [x]
+		if (data->ray.dir_vec.x < 0)
+			return (data->map.grid[(int)(y_double)][x - 1] == '1');
+		else
+			return (data->map.grid[(int)(y_double)][x] == '1');
+	}
+	else
+	{
+		if (data->ray.dir_vec.y < 0)
+			return (data->map.grid[(int)(y) - 1][(int)(x_double)] == '1');
+		else
+			return (data->map.grid[(int)(y)][(int)(x_double)] == '1');
+	}
 	//calculate_map_block(data, point, &x, &y);
-	printf("Checking if solid: (%lf, %lf)->(%d, %d), when map dimensions: %d, %d\n", \
-	point->x, point->y, x, y, \
-	data->map_w, data->map_h);
-
+	// printf("Checking if solid: (%lf, %lf)->(%d, %d), when map dimensions: %d, %d\n", \
+	// point->x, point->y, x, y, \
+	// data->map_w, data->map_h);
 	// if(x <= 0 || x >= data->map_w - 1 || y <= 0 || y >= data->map_h - 1)
 	// 	printf("Ray got out of the borders of the map !!!\n");
-	if (x <= 1 || x >= data->map_w - 1 || y <= 1 || y >= data->map_h - 1 || data->map.grid[y][x] == 1)
-		return (1);
 	return(0);
 }
 
@@ -412,41 +445,14 @@ double	get_dy(t_data *data)
 		return (ft_modf(data->player.y));
 }
 
-int	ft_double_eq(double a, double b)
-{
-	if (a - b > -EPS && a - b < EPS)
-		return (1);
-	return (0);
-}
 
-void	calc_step_lengths(t_data *data)
-{
-	printf("dir_vecs: x[%f] y[%f]\n", data->ray.dir_vec.x, data->ray.dir_vec.y);
-	printf("angle: (%f)\n", data->ray.abs_ang);
-	
-	data->ray.x_step_vec.x = data->ray.dir_vec.x;
-	if (ft_double_eq(data->ray.abs_ang, PI1_2) || ft_double_eq(data->ray.abs_ang, PI3_2))
-		data->ray.x_step_vec.y = 1000;
-	else
-		data->ray.x_step_vec.y = ft_abs(tan((data->ray.abs_ang))) * data->ray.dir_vec.y;
-	
-	
-	data->ray.y_step_vec.y = data->ray.dir_vec.y;
-	if (ft_double_eq(data->ray.abs_ang, M_PI) || ft_double_eq(data->ray.abs_ang, 0))
-		data->ray.y_step_vec.x = 1000;
-	else
-		data->ray.y_step_vec.x = ft_abs((1 / (tan((data->ray.abs_ang))))) * data->ray.dir_vec.x;
-	printf("Step_lengths: x[%f,%f] y[%f,%f]\n", \
-	data->ray.x_step_vec.x, data->ray.x_step_vec.y, \
-	data->ray.y_step_vec.x, data->ray.y_step_vec.y);
-}
 
 void	save_quarter(t_data *data)
 {
 	double	a;
 
 	a = data->ray.abs_ang;
-	if (a > 0.0 && a < M_PI)
+	if (a > 0.0 && a < PI_)
 		data->ray.dir_vec.y = 1;
 	else
 		data->ray.dir_vec.y = -1;
@@ -491,18 +497,17 @@ void	get_line_height(t_data *data)
 
 void	render_ray2d(t_data *data)
 {
-	// int	x = WIN_WIDTH / 2 - (data->map_w + data->player.x) * SCALE_2D;
-	// int	y = WIN_HEIGHT/ 2 - (data->map_h + data->player.y) * SCALE_2D;
+
 	// int	x = (data->player.x) * SCALE_2D;
 	// int	y = (data->player.y) * SCALE_2D;
 	
-	// // int	x2 = (data->player.x + data->ray.x_step_vec.x) * SCALE_2D;
-	// // int	y2 = (data->player.x + data->ray.x_step_vec.y) * SCALE_2D;
-	// // draw_line(data, x, y, x2, y2, 0xFF28F11F);
+	// int	x2 = (data->player.x + data->ray.x_step_vec.x) * SCALE_2D;
+	// int	y2 = (data->player.x + data->ray.x_step_vec.y) * SCALE_2D;
+	// draw_line(data, x, y, x2, y2, 0xFF28F11F);
 
-	// // x2 = (data->player.x + data->ray.y_step_vec.x) * SCALE_2D;
-	// // y2 = (data->player.y + data->ray.y_step_vec.y) * SCALE_2D;
-	// // draw_line(data, x + 1, y + 1, x2 + 1, y2 + 1, 0xFFB30455);
+	// x2 = (data->player.x + data->ray.y_step_vec.x) * SCALE_2D;
+	// y2 = (data->player.y + data->ray.y_step_vec.y) * SCALE_2D;
+	// draw_line(data, x + 1, y + 1, x2 + 1, y2 + 1, 0xFFB30455);
 
 	int	x = (data->player.x) * SCALE_2D;
 	int	y = (data->player.y) * SCALE_2D;
@@ -525,23 +530,60 @@ void	render_ray2d(t_data *data)
 // }
 
 
+void	calc_step_lengths(t_data *data)
+{
+	// printf("dir_vecs: x[%f] y[%f]\n", data->ray.dir_vec.x, data->ray.dir_vec.y);
+	// printf("angle: (%f)\n", data->ray.abs_ang);
+	
+	data->ray.x_step_vec.x = data->ray.dir_vec.x;
+	if (ft_double_eq(data->ray.abs_ang, PI1_2) || ft_double_eq(data->ray.abs_ang, PI3_2))
+		data->ray.x_step_vec.y = 0;
+	else
+		data->ray.x_step_vec.y = ft_abs(tan((data->ray.abs_ang))) * data->ray.dir_vec.y;
+	
+	
+	data->ray.y_step_vec.y = data->ray.dir_vec.y;
+	if (ft_double_eq(data->ray.abs_ang, M_PI) || ft_double_eq(data->ray.abs_ang, 0))
+		data->ray.y_step_vec.x = 0;
+	else
+		data->ray.y_step_vec.x = ft_abs((1 / (tan((data->ray.abs_ang))))) * data->ray.dir_vec.x;
+	// printf("Step_lengths: x[%f,%f] y[%f,%f]\n", \
+	// data->ray.x_step_vec.x, data->ray.x_step_vec.y, \
+	// data->ray.y_step_vec.x, data->ray.y_step_vec.y);
+}
+
 void	calc_first_collisions(t_data *data)
 {
-	if (distance(&(data->ray.player_pos), &(data->ray.x_step_vec)) < \
-		distance(&(data->ray.player_pos), &(data->ray.y_step_vec)))
+	if (vec_len(&(data->ray.x_step_vec)) < \
+		vec_len(&(data->ray.y_step_vec)))
+	// if (distance(&(data->ray.player_pos), &(data->ray.x_step_vec)) < \
+		// distance(&(data->ray.player_pos), &(data->ray.y_step_vec)))
 	{
+	// printf("Chosen X_step_vec\n");
 	data->ray.cur_pos.x = data->ray.x_step_vec.x * get_dx(data);
 	data->ray.cur_pos.y = data->ray.x_step_vec.y * get_dy(data);
+	data->ray.cur_x_ray.x = data->ray.cur_pos.x;
+	data->ray.cur_x_ray.y = data->ray.cur_pos.y;
+	data->ray.cur_y_ray.x = 0;
+	data->ray.cur_y_ray.y = 0;
+	// Set cur_x_ray = cur_pos, cur_y_ray 0,0
 	}
 	else
 	{
+	// printf("Chosen Y_step_vec\n");
 	data->ray.cur_pos.x = data->ray.y_step_vec.x * get_dx(data);
 	data->ray.cur_pos.y = data->ray.y_step_vec.y * get_dy(data);
+	data->ray.cur_y_ray.x = data->ray.cur_pos.x;
+	data->ray.cur_y_ray.y = data->ray.cur_pos.y;
+	data->ray.cur_x_ray.x = 0;
+	data->ray.cur_x_ray.x = 0;
+
+	// Set cur_y_ray = cur_pos, cur_x_ray 0,0
 	}
-	printf("lens: (%f, %f)\n", data->ray.cur_pos.x,  data->ray.cur_pos.y);
-	printf("D: (%f, %f) (%f,%f)\n", \
-	get_dx(data), get_dy(data), \
-	data->ray.x_step_vec.x, data->ray.x_step_vec.y);
+	// printf("lens: (%f, %f)\n", data->ray.cur_pos.x,  data->ray.cur_pos.y);
+	// printf("D: (%f, %f) (%f,%f)\n", \
+	// get_dx(data), get_dy(data), \
+	// data->ray.x_step_vec.x, data->ray.x_step_vec.y);
 }
 
 
@@ -551,10 +593,11 @@ void	cast_one_ray(t_data *data)
 	calc_step_lengths(data);
 	calc_first_collisions(data);
 	//printf("after pre-step cur pos = %f, %f\n", data->ray.cur_pos.x, data->ray.cur_pos.y);
-	// while (!is_solid(data, &(data->ray.cur_pos)))
-	// {
-	// 	ray_step(data);
-	// }
+	while (!is_solid(data, &(data->ray.cur_pos)))
+	{
+		ray_step(data);
+		printf("step!\n");
+	}
 	//printf("calculated ray end: (%f, %f)\n", data->ray.cur_pos.x, data->ray.cur_pos.y);
 	get_line_height(data);
 	render_ray2d(data);
@@ -567,6 +610,14 @@ double	get_trian_ang(double ang)
 	while (ang > PI1_2)
 		ang -= PI1_2;
 	return (ang);
+}
+
+void	norm_angle(double	*angle)
+{
+		while (*angle > PI2_)
+			*angle -= PI2_;
+		while (*angle < 0)
+			*angle += PI2_;
 }
 
 void	cast_rays(t_data *data)
@@ -584,11 +635,14 @@ void	cast_rays(t_data *data)
 		data->ray.abs_ang += ANGLE_STEP;
 		data->ray.rel_ang += ANGLE_STEP;
 		data->ray.tr_ang += ANGLE_STEP;
+		norm_angle(&(data->ray.abs_ang));
+		norm_angle(&(data->ray.rel_ang));
+		norm_angle(&(data->ray.tr_ang));
 		data->ray.tr_ang = get_trian_ang(data->ray.tr_ang);
 		data->ray.win_x += 1;
 	}
 	//draw_line_c(data, data->player.x * SCALE_2D, data->player.y * SCALE_2D, 400, data->player.theta + M_PI, 0xFF1F1FF1);
-	ft_printf("all rays cast\n");
+	// ft_printf("all rays cast\n");
 }
 
 void	drawscreen(void *ptr){
