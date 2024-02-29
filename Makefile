@@ -3,7 +3,7 @@ CC = cc
 SRCDIR = src
 INCDIR = inc  
 IFLAGS = -I ./inc -I ./libft
-CFLAGS = -Wall -Wextra -Werror -g
+CFLAGS = -Wall -Wextra -Werror -g -fsanitize=address
 MLXFLAGS = -framework Cocoa -framework OpenGL -framework IOKit -I./MLX42/include/MLX42 -L./MLX42/build -lmlx42 -lglfw
 
 SOURCE_FILES = cub3d.c \

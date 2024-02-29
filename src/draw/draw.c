@@ -6,7 +6,7 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/25 16:25:31 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/02/29 14:27:32 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/02/29 14:30:56 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,7 @@ void draw_line(t_data *data, int x1, int y1, int x2, int y2, int color) {
     int err = dx - dy;
 
     while (1) {
-		if (x1 < 0 || x1 >= WIN_WIDTH || y1 < 0 || y1 >= WIN_WIDTH)
+		if (x1 < 0 || x1 >= WIN_WIDTH || y1 < 0 || y1 >= WIN_HEIGHT)
 			return ;
 		mlx_put_pixel(data->mlx_img, x1, y1, color);
 
