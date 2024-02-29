@@ -6,7 +6,7 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/25 16:25:31 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/02/29 14:30:56 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/02/29 15:50:45 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -401,7 +401,7 @@ double	get_dx(t_data *data)
 	if (data->ray.dir_vec.x > 0)
 		return (1 - ft_modf(data->player.x));
 	else
-		return (-ft_modf(data->player.x));
+		return (ft_modf(data->player.x));
 }
 
 double	get_dy(t_data *data)
@@ -409,7 +409,7 @@ double	get_dy(t_data *data)
 	if (data->ray.dir_vec.y > 0)
 		return (1 - ft_modf(data->player.y));
 	else
-		return (-ft_modf(data->player.y));
+		return (ft_modf(data->player.y));
 }
 
 int	ft_double_eq(double a, double b)
@@ -422,21 +422,23 @@ int	ft_double_eq(double a, double b)
 void	calc_step_lengths(t_data *data)
 {
 	printf("dir_vecs: x[%f] y[%f]\n", data->ray.dir_vec.x, data->ray.dir_vec.y);
-	printf("triangle: (%f)\n", data->ray.tr_ang);
+	printf("angle: (%f)\n", data->ray.abs_ang);
 	
 	data->ray.x_step_vec.x = data->ray.dir_vec.x;
-	if (ft_double_eq(data->ray.tr_ang, PI1_2))
-		data->ray.x_step_vec.y = 0;
+	if (ft_double_eq(data->ray.abs_ang, PI1_2) || ft_double_eq(data->ray.abs_ang, PI3_2))
+		data->ray.x_step_vec.y = 1000;
 	else
-		data->ray.x_step_vec.y = tan(ft_abs(data->ray.tr_ang)) * data->ray.dir_vec.y;
+		data->ray.x_step_vec.y = ft_abs(tan((data->ray.abs_ang))) * data->ray.dir_vec.y;
 	
 	
 	data->ray.y_step_vec.y = data->ray.dir_vec.y;
-	if (ft_double_eq(data->ray.tr_ang, PI1_2))
-		data->ray.y_step_vec.x = 0;
+	if (ft_double_eq(data->ray.abs_ang, M_PI) || ft_double_eq(data->ray.abs_ang, 0))
+		data->ray.y_step_vec.x = 1000;
 	else
-		data->ray.y_step_vec.x = tan(ft_abs(data->ray.tr_ang)) * data->ray.dir_vec.x;
-	printf("Step_lengths: x[%f] y[%f]\n", data->ray.x_step_vec.y, data->ray.y_step_vec.x);
+		data->ray.y_step_vec.x = ft_abs((1 / (tan((data->ray.abs_ang))))) * data->ray.dir_vec.x;
+	printf("Step_lengths: x[%f,%f] y[%f,%f]\n", \
+	data->ray.x_step_vec.x, data->ray.x_step_vec.y, \
+	data->ray.y_step_vec.x, data->ray.y_step_vec.y);
 }
 
 void	save_quarter(t_data *data)
@@ -449,9 +451,9 @@ void	save_quarter(t_data *data)
 	else
 		data->ray.dir_vec.y = -1;
 	if (a > PI1_2 && a < PI3_2)
-		data->ray.dir_vec.x = 1;
-	else
 		data->ray.dir_vec.x = -1;
+	else
+		data->ray.dir_vec.x = 1;
 	// data->ray.dir_vec.theta = data->ray.abs_ang;
 	// calc_triangle_angle(&(data->ray.dir_vec));
 	// data->ray.cur_pos.theta = data->ray.dir_vec.theta;
@@ -491,16 +493,23 @@ void	render_ray2d(t_data *data)
 {
 	// int	x = WIN_WIDTH / 2 - (data->map_w + data->player.x) * SCALE_2D;
 	// int	y = WIN_HEIGHT/ 2 - (data->map_h + data->player.y) * SCALE_2D;
+	// int	x = (data->player.x) * SCALE_2D;
+	// int	y = (data->player.y) * SCALE_2D;
+	
+	// // int	x2 = (data->player.x + data->ray.x_step_vec.x) * SCALE_2D;
+	// // int	y2 = (data->player.x + data->ray.x_step_vec.y) * SCALE_2D;
+	// // draw_line(data, x, y, x2, y2, 0xFF28F11F);
+
+	// // x2 = (data->player.x + data->ray.y_step_vec.x) * SCALE_2D;
+	// // y2 = (data->player.y + data->ray.y_step_vec.y) * SCALE_2D;
+	// // draw_line(data, x + 1, y + 1, x2 + 1, y2 + 1, 0xFFB30455);
+
 	int	x = (data->player.x) * SCALE_2D;
 	int	y = (data->player.y) * SCALE_2D;
-	
-	int	x2 = (data->player.x + data->ray.x_step_vec.x) * SCALE_2D;
-	int	y2 = (data->player.x + data->ray.x_step_vec.y) * SCALE_2D;
-	draw_line(data, x, y, x2, y2, 0xFF28F11F);
 
-	x2 = (data->player.x + data->ray.y_step_vec.x) * SCALE_2D;
-	y2 = (data->player.x + data->ray.y_step_vec.y) * SCALE_2D;
-	draw_line(data, x + 1, y + 1, x2 + 1, y2 + 1, 0xFFB3041F);
+	int	x2 = (data->player.x + data->ray.cur_pos.x) * SCALE_2D;
+	int	y2 = (data->player.y + data->ray.cur_pos.y) * SCALE_2D;
+	draw_line(data, x, y, x2, y2, 0xFF28F11F);
 }
 
 // void	showlines(t_data *data)
@@ -518,23 +527,21 @@ void	render_ray2d(t_data *data)
 
 void	calc_first_collisions(t_data *data)
 {
-	double aTan = -1/tan(data->ray.abs_ang);
-	if (data->ray.abs_ang > M_PI && data->ray.abs_ang < M_PI * 2)
+	if (distance(&(data->ray.player_pos), &(data->ray.x_step_vec)) < \
+		distance(&(data->ray.player_pos), &(data->ray.y_step_vec)))
 	{
-		data->ray.cur_pos.y = (int)data->player.y;
-		data->ray.cur_pos.x = data->player.y - data->ray.cur_pos.y * aTan + data->player.x;
-	}
-	else if (data->ray.abs_ang < M_PI && data->ray.abs_ang > 0)
-	{
-		data->ray.cur_pos.y = ceil(data->player.y);
-		data->ray.cur_pos.x = data->player.y + data->ray.cur_pos.y * aTan + data->player.x;
+	data->ray.cur_pos.x = data->ray.x_step_vec.x * get_dx(data);
+	data->ray.cur_pos.y = data->ray.x_step_vec.y * get_dy(data);
 	}
 	else
 	{
-		data->ray.cur_pos.y = data->player.y;
-		data->ray.cur_pos.x = data->player.x;
+	data->ray.cur_pos.x = data->ray.y_step_vec.x * get_dx(data);
+	data->ray.cur_pos.y = data->ray.y_step_vec.y * get_dy(data);
 	}
-	
+	printf("lens: (%f, %f)\n", data->ray.cur_pos.x,  data->ray.cur_pos.y);
+	printf("D: (%f, %f) (%f,%f)\n", \
+	get_dx(data), get_dy(data), \
+	data->ray.x_step_vec.x, data->ray.x_step_vec.y);
 }
 
 
