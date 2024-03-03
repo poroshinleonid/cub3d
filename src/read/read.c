@@ -6,7 +6,7 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 16:58:48 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/03/03 17:14:56 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/03/03 17:50:18 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,8 +154,28 @@ int	find_player_pos(t_data *data)
 
 int	is_map_valid(t_data *data)
 {
-	if (data->map.grid[0][0] != 1)
-		return (0);
+	int	i;
+	int	j;
+	int	players_count;
+
+	i = 0;
+	j = 0;
+	players_count = 0;
+	while (i < data->map.h)
+	{
+		j = 0;
+		while (j < data->map.w)
+		{
+			if (((j == 0 || j == data->map.w - 1) || \
+				(i == 0 || i == data->map.h - 1)) && \
+					data->map.grid[i][j] != '1')
+				return (0);
+			if (ft_in(data->map.grid[i][j], MAP_PLAYER_CHARSET))
+				players_count++;
+			j++;
+		}
+		i++;
+	}
 	return (1);
 }
 
@@ -168,7 +188,7 @@ int	load_map(t_data *data, int fd)
 	close(fd);
 	find_player_pos(data);
 	if (!is_map_valid(data))
-		terminate(data, "Map error\n");
+		terminate(data, "Map invalid\n");
 	return (0);
 }
 
@@ -182,9 +202,9 @@ int	parse_map(t_data *data, char *pathname)
 	if (fd < 0)
 		terminate(data, "Can't parse the map\n");
 	if (load_map(data, fd) != 0)
-		terminate(data, "Can't parse the map\n");
+		terminate(data, "Can't load the map\n");
 	// if (load_textures(data, fd) != 0)
-	// 	terminate(data, "Can't parse the map\n");
+	// 	terminate(data, "Can't load the textures\n");
 	return (EXIT_SUCCESS);
 }
 

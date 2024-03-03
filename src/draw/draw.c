@@ -6,7 +6,7 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/25 16:25:31 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/02/27 15:49:26 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/03/03 17:52:16 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -196,16 +196,17 @@ void	cast_one_ray(t_data *data, double cur_ang, int cur_x)
 	t_vec	signs;
 	signs.x = (ray_vec.x > 0)?(1):(-1);
 	signs.y = (ray_vec.y > 0)?(1):(-1);
-	while (!hit)
-	{
-		//Infinite loop here for some reason!
-		write(1, "S", 1);
-		next_intersection_v = get_next_point(data, ray_vec, cur_ray_pos, signs);
-		cur_ray_pos.x = next_intersection_v->x;
-		cur_ray_pos.y = next_intersection_v->y;
-		if (is_solid(data, next_intersection_v))
-			hit = 1;
-	}
+	next_intersection_v = get_next_point(data, ray_vec, cur_ray_pos, signs);
+	// while (!hit)
+	// {
+	// 	//Infinite loop here for some reason!
+	// 	write(1, "S", 1);
+	// 	next_intersection_v = get_next_point(data, ray_vec, cur_ray_pos, signs);
+	// 	cur_ray_pos.x = next_intersection_v->x;
+	// 	cur_ray_pos.y = next_intersection_v->y;
+	// 	if (is_solid(data, next_intersection_v))
+	// 		hit = 1;
+	// }
 	double	ray_len = distance(&player_pos, next_intersection_v);
 	//height 1 -> 
 	//int		height = ray_len * tan(FOV_ANGLE);
@@ -243,7 +244,7 @@ void	cast_rays(t_data *data)
 	cur_x = 0;
 	while (cur_x < WIN_WIDTH)
 	{
-		cast_one_ray(data, cur_ang, cur_x);
+		//cast_one_ray(data, cur_ang, cur_x);
 		cur_ang += ang_step;
 		cur_x++;
 	}
@@ -253,7 +254,7 @@ void	drawscreen(void *ptr){
 	t_data	*data = (t_data *)ptr;
 	
 	cast_rays(data);
-	//draw_minimap(data);
+	draw_minimap(data);
 }
 
 void	listenkeys(mlx_key_data_t keydata, void* ptr)

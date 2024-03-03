@@ -2,16 +2,19 @@ NAME = cub3D
 CC = cc
 SRCDIR = src
 INCDIR = inc  
-IFLAGS = -I ./inc -I ./libft
+IFLAGS = -I ./libft -I ./MLX42/include/MLX42
 CFLAGS = -Wall -Wextra -Werror -g
 MLXFLAGS = -framework Cocoa -framework OpenGL -framework IOKit -I./MLX42/include/MLX42 -L./MLX42/build -lmlx42 -lglfw
 
-SOURCE_FILES = cub3d.c \
-		read/read.c \
-		utils/ui.c \
+SOURCE_FILES = \
+		debug/debug.c \
 		draw/draw.c \
+		engine/movement.c \
+		move/move.c \
+		read/read.c \
 		utils/misc.c \
-		engine/movement.c
+		utils/ui.c \
+		textures.c
 CFILES = $(addprefix $(SRCDIR)/,$(SOURCE_FILES))
 MAINSOURCE := $(SRCDIR)/cub3d.c
 DEBUGFILES = src/debug/debug.c
@@ -53,8 +56,8 @@ taetest: install_mlx
 
 all: $(NAME)
 
-$(NAME): $(SOURCES) $(MAINSOURCE) $(INCLUDES) $(LIBFT)
-	$(CC) $(CFLAGS) $(INC_FLAGS) $(SOURCES) $(MAINSOURCE) -o $(NAME)
+$(NAME): $(CFILES) $(MAINSOURCE) $(LIBFT)
+	$(CC) $(CFLAGS) $(INC_FLAGS) $(IFLAGS) $(MLXFLAGS) $(CFILES) $(MAINSOURCE) -o $(NAME)
 
 $(LIBFT):
 	make -C $(LIBFTDIR)
