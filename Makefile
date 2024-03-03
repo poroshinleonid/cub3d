@@ -29,11 +29,11 @@ LIBFT=$(LIBFTDIR)/libft.a
 # mlx
 install: install_brew install_glfw
 
-install_brew:
-	rm -r $HOME/.brew && rm -rf $HOME/goinfre/.brew && \
-	git clone --depth=1 https://github.com/Homebrew/brew $HOME/goinfre/.brew && \
-	echo 'export PATH=$HOME/goinfre/.brew/bin:$PATH' >> $HOME/.zshrc && \
-	source $HOME/.zshrc && brew update \
+# install_brew:
+# 	rm -r $(HOME)/.brew && rm -rf $(HOME/goinfre/.brew && \
+# 	git clone --depth=1 https://github.com/Homebrew/brew $HOME/goinfre/.brew && \
+# 	echo 'export PATH=$HOME/goinfre/.brew/bin:$PATH' >> $HOME/.zshrc && \
+# 	source $(HOME)/.zshrc && brew update \
 
 install_libraries:
 	brew install glfw

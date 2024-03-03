@@ -6,7 +6,7 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 16:58:48 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/02/26 13:19:20 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/03/03 17:14:56 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,6 +152,13 @@ int	find_player_pos(t_data *data)
 	return (0);
 }
 
+int	is_map_valid(t_data *data)
+{
+	if (data->map.grid[0][0] != 1)
+		return (0);
+	return (1);
+}
+
 int	load_map(t_data *data, int fd)
 {
 	int	i;
@@ -160,7 +167,8 @@ int	load_map(t_data *data, int fd)
 		(void)i;
 	close(fd);
 	find_player_pos(data);
-	//Check that map is valid (player exists, there are walls, etc)
+	if (!is_map_valid(data))
+		terminate(data, "Map error\n");
 	return (0);
 }
 
