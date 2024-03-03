@@ -6,7 +6,7 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 17:35:05 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/02/29 17:55:28 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/02/29 19:25:49 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@ typedef struct s_ray {
 	double	abs_ang;
 	double	rel_ang;
 	double	tr_ang;
+	double	player_offset_x;
+	double	player_offset_y;
 	t_vec	player_pos;
 	t_vec	cur_pos;
 	t_vec	cur_x_ray;

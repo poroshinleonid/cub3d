@@ -6,7 +6,7 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/25 16:25:31 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/02/29 18:19:44 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/02/29 19:31:43 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,6 @@ void	ray_step(t_data *data)
 	double	dist_x;
 	double	dist_y;
 	
-	//
 	vec_write_sum_parallel(&next_x_ray, data->ray.cur_x_ray, data->ray.x_step_vec);
 	vec_write_sum_parallel(&next_y_ray, data->ray.cur_y_ray, data->ray.y_step_vec);
 	// normalize_vec_to_map(data, &next_x_ray);
@@ -532,9 +531,7 @@ void	render_ray2d(t_data *data)
 
 void	calc_step_lengths(t_data *data)
 {
-	// printf("dir_vecs: x[%f] y[%f]\n", data->ray.dir_vec.x, data->ray.dir_vec.y);
-	// printf("angle: (%f)\n", data->ray.abs_ang);
-	
+	//here add offset
 	data->ray.x_step_vec.x = data->ray.dir_vec.x;
 	if (ft_double_eq(data->ray.abs_ang, PI1_2) || ft_double_eq(data->ray.abs_ang, PI3_2))
 		data->ray.x_step_vec.y = 0;
@@ -547,13 +544,13 @@ void	calc_step_lengths(t_data *data)
 		data->ray.y_step_vec.x = 0;
 	else
 		data->ray.y_step_vec.x = ft_abs((1 / (tan((data->ray.abs_ang))))) * data->ray.dir_vec.x;
-	// printf("Step_lengths: x[%f,%f] y[%f,%f]\n", \
-	// data->ray.x_step_vec.x, data->ray.x_step_vec.y, \
-	// data->ray.y_step_vec.x, data->ray.y_step_vec.y);
 }
 
 void	calc_first_collisions(t_data *data)
 {
+	data->ray.player_offset_x = get_dx(data);
+	data->ray.player_offset_y = get_dx(data);
+
 	if (vec_len(&(data->ray.x_step_vec)) < \
 		vec_len(&(data->ray.y_step_vec)))
 	// if (distance(&(data->ray.player_pos), &(data->ray.x_step_vec)) < \
@@ -562,10 +559,11 @@ void	calc_first_collisions(t_data *data)
 	// printf("Chosen X_step_vec\n");
 	data->ray.cur_pos.x = data->ray.x_step_vec.x * get_dx(data);
 	data->ray.cur_pos.y = data->ray.x_step_vec.y * get_dy(data);
+	
 	data->ray.cur_x_ray.x = data->ray.cur_pos.x;
 	data->ray.cur_x_ray.y = data->ray.cur_pos.y;
 	data->ray.cur_y_ray.x = 0;
-	data->ray.cur_y_ray.y = 0;
+	data->ray.cur_y_ray.y = 0;	
 	// Set cur_x_ray = cur_pos, cur_y_ray 0,0
 	}
 	else
