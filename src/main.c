@@ -96,6 +96,7 @@ void	print_map(t_data *data)
 		ft_printf("RESGRID: [%s]\n", data->map.grid[i]);
 		i++;
 	}
+	printf("Player pos: %f, %f\n", data->player.x, data->player.y);
 }
 
 int	main(int argc, char **argv)
