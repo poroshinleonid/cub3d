@@ -2,62 +2,24 @@ NAME = cub3D
 CC = cc
 SRCDIR = src
 INCDIR = inc  
-IFLAGS = -I ./libft -I ./MLX42/include/MLX42
-CFLAGS = -Wall -Wextra -Werror -g
+CFLAGS = -Wall -Wextra -O3
+IFLAGS := -I ./$(INCDIR) -I ./libft -L ./libft -lft -lm
 MLXFLAGS = -framework Cocoa -framework OpenGL -framework IOKit -I./MLX42/include/MLX42 -L./MLX42/build -lmlx42 -lglfw
 
-SOURCE_FILES = \
-		debug/debug.c \
-		draw/draw.c \
-		engine/movement.c \
-		move/move.c \
-		read/read.c \
-		utils/misc.c \
-		utils/ui.c \
-		textures.c
-CFILES = $(addprefix $(SRCDIR)/,$(SOURCE_FILES))
-MAINSOURCE := $(SRCDIR)/cub3d.c
-DEBUGFILES = src/debug/debug.c
-
-INCLUDE_FILES := \
-					cub3d.h \
-					config.h
-INCLUDES := $(addprefix $(INCDIR)/,$(INCLUDE_FILES))
-INC_FLAGS := -I ./$(INCDIR) -I ./libft -L ./libft -lft -lm
+SOURCE_FILES = main.c render.c textures.c movement.c keys.c \
+			raycast/horizontal_intersection.c raycast/vertical_intersection.c raycast/raycast_utils.c raycast/raycast.c
+SRC = $(addprefix $(SRCDIR)/,$(SOURCE_FILES))
 
 # libft
 LIBFTDIR=libft
 LIBFT=$(LIBFTDIR)/libft.a
 
+all: $(LIBFT) make_mlx
+	$(CC) $(CFLAGS) $(MLXFLAGS) $(IFLAGS) $(SRC)
+
 # mlx
-install: install_brew install_glfw
-
-# install_brew:
-# 	rm -r $(HOME)/.brew && rm -rf $(HOME/goinfre/.brew && \
-# 	git clone --depth=1 https://github.com/Homebrew/brew $HOME/goinfre/.brew && \
-# 	echo 'export PATH=$HOME/goinfre/.brew/bin:$PATH' >> $HOME/.zshrc && \
-# 	source $(HOME)/.zshrc && brew update \
-
-install_libraries:
-	brew install glfw
-	brew install cmake
-
-install_mlx:
+make_mlx:
 	(cd MLX42 && cmake -B build && cmake --build build -j4)
-
-testleo: $(LIBFT) install_mlx
-	$(CC) $(CFLAGS) $(MLXFLAGS) $(CFILES) $(DEBUGFILES) $(IFLAGS) -Llibft -lft  -o bin/testleo.out
-
-taetexturetest: install_mlx
-	$(CC) $(CFLAGS) $(MLXFLAGS) taetest/textures.c src/textures.c src/utils/ui.c -L./libft -lft $(IFLAGS)
-
-taetest: install_mlx
-	$(CC) $(CFLAGS) $(MLXFLAGS) taetest/main.c src/engine/movement.c src/textures.c src/utils/ui.c -L./libft -lft $(IFLAGS)
-
-all: $(NAME)
-
-$(NAME): $(CFILES) $(MAINSOURCE) $(LIBFT)
-	$(CC) $(CFLAGS) $(INC_FLAGS) $(IFLAGS) $(MLXFLAGS) $(CFILES) $(MAINSOURCE) -o $(NAME)
 
 $(LIBFT):
 	make -C $(LIBFTDIR)
@@ -69,7 +31,5 @@ fclean: clean
 	rm -f $(NAME)
 
 re: fclean all
-
-
 
 .PHONY: all clean fclean re
