@@ -6,7 +6,7 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 16:58:48 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/03/19 14:39:05 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/03/19 16:39:22 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,9 @@ int	ft_atoi_cub(char *s)
 
 int	terminate(t_data *data, char *s)
 {
+	ft_printf("Terminated leo\n");
+	if (s)
+		ft_printf("Error! %s\n", s);
 	return (0);
 }
 
@@ -89,39 +92,134 @@ int	save_map_map_info(t_data *data, char *line, int fd)
 	return (0);
 }
 
+void pr(t_data *data)
+{
+	char **p = data->map.grid;
+	printf("%d %d\n", data->map.h, data->map.w);
+	while (*p != NULL)
+	{
+		printf("[%s]\n", p[0]);
+		p++;
+	}
+}
+
+char	*ft_str_extend(char *s, char filler, int reslen)
+{
+	char	*newstr;
+	int		i;
+
+	i = 0;
+	newstr = ft_calloc(reslen + 1, sizeof(char));
+	while (s[i])
+	{
+		newstr[i] = s[i];
+		i++;
+	}
+	while (i < reslen)
+	{
+		newstr[i] = filler;
+		i++;
+	}
+	free(s);
+	return (newstr);
+}
+
 int	save_map_grid(t_data *data, char *line, int fd)
 {
-	data->map.w = ft_strlen(line);
-	data->map.h= 0;
+	int	temp;
+
+	data->map.h = ft_strlen(line);
+	temp = data->map.h;
+	data->map.w= 0;
 	//FIX ME
-	data->map.grid = ft_calloc(100, sizeof(char *));
+	data->map.grid = ft_calloc(temp + 1, sizeof(char *));
 	int i = 0;
 	while (line && line[0] != '\0')
 	{
+		if (i == temp - 1)
+		{
+			data->map.grid = ft_realloc(data->map.grid, \
+						temp * sizeof(char *), \
+						temp * sizeof(char *) * 2);
+			temp *= 2;
+		}
 		ft_printf("Saving [%s] to map\n", line);
-		if (!ft_consists_of(line, MAP_CHARSET) || \
-		ft_strlen(line) != data->map.w)
+		if (!ft_consists_of(line, MAP_CHARSET))
 		{
 			free(line);
 			return (-1);
 		}
 		data->map.grid[i++] = line;
-		data->map.h += 1;
-		line = ft_strtrim(get_next_line(fd), " \n");
+		if (ft_strlen(line) > data->map.h)
+		{
+			data->map.h = ft_strlen(line);
+			ft_printf("Now map width is %d\n", data->map.h);
+		}
+		data->map.w += 1;
+		line = ft_strtrim(get_next_line(fd), "\n");
+		//ft_printf("I read [%s] to map\n", line);
 	}
 	return (1);
 }
+void	print_map2(t_data *data)
+{
+	int	i;
+
+	i = 0;
+	while (data->map.grid[i])
+	{
+		ft_printf("NORM: [%s]\n", data->map.grid[i]);
+		i++;
+	}
+}
+void	normalize_map(t_data *data)
+{
+	int	i;
+
+	i = 0;
+	while (data->map.grid[i])
+	{
+		if (ft_strlen(data->map.grid[i]) < data->map.h)
+			data->map.grid[i] = ft_str_extend(data->map.grid[i], ' ', data->map.h);
+		i++;
+	}
+	print_map2(data);
+}
 
 
-int	save_map_meta(t_data *data, int fd)
+// int	save_map_meta(t_data *data, int fd)
+// {
+// 	char	*line;
+// 	line = ft_strtrim(ft_strtrim(get_next_line(fd), "\n"), " ");
+// 	line = ft_strtrim(ft_strtrim(get_next_line(fd), "\n"), " ");
+// 	if (line == NULL)
+// 		return (-1);
+// 	else if (ft_isdigit(line[0]))
+// 		return (save_map_grid(data, line, fd));
+// 	else if ((line[0] =='N' && data->textures.no_path == NULL) || \
+// 		(line[0] =='S' && data->textures.so_path == NULL) || \
+// 		(line[0] =='W' && data->textures.we_path == NULL) || \
+// 		(line[0] =='E' && data->textures.ea_path == NULL) || \
+// 		(line[0] =='F' && data->map.floor_col == 0xFF000000) || \
+// 		(line[0] =='C' && data->map.sky_col == 0xFF000000))
+// 		return (save_map_map_info(data, line, fd));
+// 	else if (line[0] == '\0')
+// 		return (0);
+// 	else
+// 	{
+// 		free(line);
+// 		close(fd);
+// 		terminate(data, "Can't read the map!!!\n");
+// 	}
+// 	return (0);
+// }
+
+int	save_map_metainf(t_data *data, int fd)
 {
 	char	*line;
-	line = ft_strtrim(ft_strtrim(get_next_line(fd), "\n"), " ");
-	printf("LIne: [%s]\n", line);
+	line = ft_strtrim(get_next_line(fd), "\n");
 	if (line == NULL)
 		return (-1);
-	else if (ft_isdigit(line[0]))
-		return (save_map_grid(data, line, fd));
 	else if ((line[0] =='N' && data->textures.no_path == NULL) || \
 		(line[0] =='S' && data->textures.so_path == NULL) || \
 		(line[0] =='W' && data->textures.we_path == NULL) || \
@@ -129,8 +227,10 @@ int	save_map_meta(t_data *data, int fd)
 		(line[0] =='F' && data->map.floor_col == 0xFF000000) || \
 		(line[0] =='C' && data->map.sky_col == 0xFF000000))
 		return (save_map_map_info(data, line, fd));
-	else if (line[0] == '\n')
+	else if (line[0] == '\0' || ft_consists_of(line, " \t\v\f\r"))
 		return (0);
+	else if (ft_isdigit(line[0]) || line[0] == ' ')
+		return (save_map_grid(data, line, fd));
 	else
 	{
 		free(line);
@@ -139,6 +239,9 @@ int	save_map_meta(t_data *data, int fd)
 	}
 	return (0);
 }
+
+
+
 
 int	save_player_pos(t_data *data, int x, int y)
 {
@@ -154,7 +257,7 @@ int	save_player_pos(t_data *data, int x, int y)
 		data->player.a = 0.0;
 	else
 		return (1);
-	data->map.grid[y][x] = 0;
+	data->map.grid[y][x] = '0';
 	return (0);
 }
 
@@ -164,12 +267,12 @@ int	find_player_pos(t_data *data)
 	int	j;
 
 	i = 0;
-	while (i < data->map.h)
+	while (i < data->map.w)
 	{
 		j = 0;
-		while (j < data->map.w)
+		while (j < data->map.h)
 		{
-			if (!ft_isdigit(data->map.grid[i][j]))
+			if (ft_in(data->map.grid[i][j], MAP_PLAYER_CHARSET))
 			{
 				save_player_pos(data, j, i);
 			}
@@ -180,43 +283,93 @@ int	find_player_pos(t_data *data)
 	return (0);
 }
 
-int	is_map_valid(t_data *data)
+int check_players(t_data *data)
 {
+	int	pl_amt;
 	int	i;
 	int	j;
-	int	players_count;
 
 	i = 0;
 	j = 0;
-	players_count = 0;
+	pl_amt = 0;
 	while (i < data->map.h)
 	{
 		j = 0;
 		while (j < data->map.w)
 		{
-			if (((j == 0 || j == data->map.w - 1) || \
-				(i == 0 || i == data->map.h - 1)) && \
-					data->map.grid[i][j] != '1')
-				return (0);
 			if (ft_in(data->map.grid[i][j], MAP_PLAYER_CHARSET))
-				players_count++;
+				pl_amt++;
 			j++;
 		}
 		i++;
 	}
-	return (1);
+	return (pl_amt == 1);
+}
+
+int	is_map_valid(t_data *data)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	j = 0;
+	while (i < data->map.h)
+	{
+		j = 0;
+		while (j < data->map.w)
+		{
+			if (!ft_in(data->map.grid[i][j], MAP_CHARSET) || \
+					(ft_in(data->map.grid[i][j], MAP_INSIDE_CHARSET) && \
+					(	(!i || !j || i == data->map.h - 1 || j == data->map.w - 1) || \
+						(ft_in(data->map.grid[i - 1][j], MAP_OUT_CHARSET)) || \
+						(ft_in(data->map.grid[i + 1][j], MAP_OUT_CHARSET)) || \
+						(ft_in(data->map.grid[i][j + 1], MAP_OUT_CHARSET)) || \
+						(ft_in(data->map.grid[i][j - 1], MAP_OUT_CHARSET)) \
+					)))
+			{
+				ft_printf("map invalid: i=%d, j=%d, char=%c\n", i, j, data->map.grid[i][j]);
+				return (0);
+			}
+			j++;
+		}
+		i++;
+	}
+	return (check_players(data));
+}
+
+void	replace_spaces(t_data *data)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	j = 0;
+	while (i < data->map.w)
+	{
+		j = 0;
+		while (j < data->map.h)
+		{
+			if (data->map.grid[i][j] == ' ')
+				data->map.grid[i][j] = '1';
+			j++;
+		}
+		i++;
+	}
+	print_map2(data);
 }
 
 int	load_map(t_data *data, int fd)
 {
 	int	i;
 
-	while (save_map_meta(data, fd) == 0)
+	while (save_map_metainf(data, fd) == 0)
 		(void)i;
 	close(fd);
+	normalize_map(data);
 	find_player_pos(data);
 	if (!is_map_valid(data))
 		terminate(data, "Map invalid\n");
+	replace_spaces(data);
 	return (0);
 }
 

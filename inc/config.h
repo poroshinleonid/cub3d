@@ -11,7 +11,7 @@
 
 # define FOV PI / 3
 
-# define PLAYER_SPEED 1.0
+# define PLAYER_SPEED 4.0
 # define PL_ROT_SPEED 0.1
 
 # define RED 0xFF0000FF
@@ -24,7 +24,9 @@
 # define FLOOR_CLR 0x8B4513FF
 # define SKY_CLR 0x87CEEBFF
 
-# define MAP_CHARSET "01NSWE"
+# define MAP_CHARSET "01NSWE "
+# define MAP_INSIDE_CHARSET "0NSWE"
+# define MAP_OUT_CHARSET " "
 # define MAP_PLAYER_CHARSET "NSWE"
 
 #endif

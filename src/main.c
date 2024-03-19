@@ -2,6 +2,7 @@
 #include "config.h"
 #include "cub3d.h"
 #include "funcs.h"
+#include "libft.h"
 #include "textures.h"
 #include <stdlib.h>
 
@@ -85,12 +86,25 @@ void	load_stuff(t_data *data)
 	load_textures(data);
 }
 
+void	print_map(t_data *data)
+{
+	int	i;
+
+	i = 0;
+	while (data->map.grid[i])
+	{
+		ft_printf("RESGRID: [%s]\n", data->map.grid[i]);
+		i++;
+	}
+}
+
 int	main(int argc, char **argv)
 {
 	t_data	data;
 
 	if (argc != 2 || parse_map(&data, argv[1]) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
+	print_map(&data);
 	load_stuff(&data);
 	mlx_loop_hook(data.mlx, render, &data);
 	mlx_loop_hook(data.mlx, listen_keys, &data);
