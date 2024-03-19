@@ -67,28 +67,30 @@ char	**make_grid(void)
 
 void	load_stuff(t_data *data)
 {
-	data->player.x = 125.0;
-	data->player.y = 75.0;
-	data->player.a = PI / 2;
-	data->map.grid = make_grid();
-	data->map.w = W_MAP;
-	data->map.h = H_MAP;
+	//data->player.x = 125.0;
+	//data->player.y = 75.0;
+	//data->player.a = PI / 2;
+	//data->map.grid = make_grid();
+	//data->map.w = W_MAP;
+	//data->map.h = H_MAP;
 	data->mlx = mlx_init(INIT_WIN_WIDTH, INIT_WIN_HEIGHT, "cub3d", 1);
 	data->img_map = mlx_new_image(data->mlx, INIT_WIN_WIDTH, INIT_WIN_HEIGHT);
 	data->img_3d = mlx_new_image(data->mlx, INIT_WIN_WIDTH, INIT_WIN_HEIGHT);
 	data->img_width = INIT_WIN_WIDTH;
 	data->img_height = INIT_WIN_HEIGHT;
-	data->textures.no_path = "./textures/n.png";
-	data->textures.so_path = "./textures/s.png";
-	data->textures.ea_path = "./textures/a.png";
-	data->textures.we_path = "./textures/w.png";
+	// data->textures.no_path = "./textures/n.png";
+	// data->textures.so_path = "./textures/s.png";
+	// data->textures.ea_path = "./textures/a.png";
+	// data->textures.we_path = "./textures/w.png";
 	load_textures(data);
 }
 
-int	main(void)
+int	main(int argc, char **argv)
 {
 	t_data	data;
 
+	if (argc != 2 || parse_map(&data, argv[1]) == EXIT_FAILURE)
+		return (EXIT_FAILURE);
 	load_stuff(&data);
 	mlx_loop_hook(data.mlx, render, &data);
 	mlx_loop_hook(data.mlx, listen_keys, &data);

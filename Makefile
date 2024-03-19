@@ -2,12 +2,20 @@ NAME = cub3D
 CC = cc
 SRCDIR = src
 INCDIR = inc  
-CFLAGS = -Wall -Wextra -O3
+CFLAGS = -Wall -Wextra -O3 -g
 IFLAGS := -I ./$(INCDIR) -I ./libft -L ./libft -lft -lm
 MLXFLAGS = -framework Cocoa -framework OpenGL -framework IOKit -I./MLX42/include/MLX42 -L./MLX42/build -lmlx42 -lglfw
 
-SOURCE_FILES = main.c render.c textures.c movement.c keys.c \
-			raycast/horizontal_intersection.c raycast/vertical_intersection.c raycast/raycast_utils.c raycast/raycast.c
+SOURCE_FILES = main.c \
+			render.c \
+			textures.c \
+			movement.c \
+			keys.c \
+			reader.c \
+			raycast/horizontal_intersection.c \
+			raycast/vertical_intersection.c \
+			raycast/raycast_utils.c \
+			raycast/raycast.c
 SRC = $(addprefix $(SRCDIR)/,$(SOURCE_FILES))
 
 # libft

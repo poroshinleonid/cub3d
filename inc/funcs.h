@@ -4,6 +4,8 @@
 # include "cub3d.h"
 # include <stdbool.h>
 
+int		parse_map(t_data *data, char *pathname);
+
 void	render(void *void_data);
 void	listen_keys(void *void_data);
 void	resize_hook(int32_t width, int32_t height, void *void_data);
