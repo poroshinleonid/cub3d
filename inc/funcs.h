@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   funcs.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: trusanov <trusanov@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/03/20 16:27:56 by trusanov          #+#    #+#             */
+/*   Updated: 2024/03/20 16:27:57 by trusanov         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef FUNCS_H
 # define FUNCS_H
 
@@ -20,7 +32,7 @@ t_point	vertical_intersection(t_data *data, float ra);
 
 void	movement_hook(t_data *data);
 
-int 	check_players(t_data *data);
+int		check_players(t_data *data);
 int		ft_atoi_cub(char *s);
 void	terminate(t_data *data, const char *err_message);
 void	free_mem(t_data *data);
@@ -32,7 +44,5 @@ int		save_map_metainf(t_data *data, int fd);
 int		save_map_info(t_data *data, char *line, int fd);
 void	normalize_map(t_data *data);
 void	print_error(const char *message);
-
-
 
 #endif
