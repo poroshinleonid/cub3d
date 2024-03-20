@@ -20,22 +20,10 @@
 # define W_MAP 6
 
 # define PI 3.14159265359
-
-// PI / 3
 # define FOV 1.0471975512
 
 # define PLAYER_SPEED 4.0
 # define PL_ROT_SPEED 0.1
-
-# define RED 0xFF0000FF
-# define GREEN 0x00FF00FF
-# define BLUE 0x0000FFFF
-# define YELLOW 0x00FFFFFF
-# define BLACK 0x000000FF
-# define CYAN 0x00FFFFFF
-
-# define FLOOR_CLR 0x8B4513FF
-# define SKY_CLR 0x87CEEBFF
 
 # define MAP_CHARSET "01NSWE "
 # define MAP_INSIDE_CHARSET "0NSWE"
