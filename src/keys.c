@@ -6,7 +6,7 @@
 /*   By: trusanov <trusanov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 15:30:32 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/03/20 16:59:57 by trusanov         ###   ########.fr       */
+/*   Updated: 2024/03/20 17:25:55 by trusanov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ void	resize_hook(int32_t width, int32_t height, void *void_data)
 
 void	close_hook(void *void_data)
 {
-	t_data *data;
+	t_data	*data;
 
 	data = (t_data *)void_data;
 	free_mem(data);
