@@ -11,7 +11,10 @@ SOURCE_FILES = main.c \
 			textures.c \
 			movement.c \
 			keys.c \
-			reader.c \
+			reader/reader.c \
+			reader/map_utils.c \
+			reader/utils.c \
+			reader/parsing.c \
 			raycast/horizontal_intersection.c \
 			raycast/vertical_intersection.c \
 			raycast/raycast_utils.c \
@@ -23,7 +26,7 @@ LIBFTDIR=libft
 LIBFT=$(LIBFTDIR)/libft.a
 
 all: $(LIBFT) make_mlx
-	$(CC) $(CFLAGS) $(MLXFLAGS) $(IFLAGS) $(SRC)
+	$(CC) $(CFLAGS) $(MLXFLAGS) $(IFLAGS) $(SRC) -o $(NAME)
 
 # mlx
 make_mlx:

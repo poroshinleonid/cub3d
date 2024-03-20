@@ -2,14 +2,9 @@
 #include "config.h"
 #include "libft.h"
 #include "textures.h"
+#include "funcs.h"
 #include "unistd.h"
 #include <math.h>
-
-static void	terminate(t_data *data, const char *err)
-{
-	// temporary, replace later
-	exit(1);
-}
 
 mlx_image_t	*load_one_texture(t_data *data, const char *path)
 {

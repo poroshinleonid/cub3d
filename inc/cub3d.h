@@ -6,8 +6,8 @@
 typedef struct s_map
 {
 	char		**grid;
-	int32_t		floor_col;
-	int32_t		sky_col;
+	uint32_t	floor_col;
+	uint32_t	sky_col;
 	int32_t		w;
 	int32_t		h;
 }				t_map;
