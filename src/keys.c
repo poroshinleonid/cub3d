@@ -1,7 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   keys.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/03/20 15:30:32 by lporoshi          #+#    #+#             */
+/*   Updated: 2024/03/20 15:30:33 by lporoshi         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "MLX42.h"
 #include "config.h"
 #include "cub3d.h"
 #include "funcs.h"
+#include "libft.h"
 #include <math.h>
 #include <stdlib.h>
 
@@ -28,9 +41,11 @@ void	listen_keys(void *void_data)
 	t_data	*data;
 
 	data = (t_data *)void_data;
-	if (mlx_is_key_down(data->mlx, MLX_KEY_ESCAPE))
+	if (mlx_is_key_down(data->mlx, MLX_KEY_ESCAPE) \
+		|| mlx_is_key_down(data->mlx, MLX_KEY_Q))
 	{
-		// free_all();
+		free_mem(data);
+		ft_printf("Goodbye!\n");
 		exit(0);
 	}
 	movement_hook(data);

@@ -6,7 +6,7 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 14:30:51 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/03/20 15:09:43 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/03/20 15:32:27 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 #include "cub3d.h"
 #include "config.h"
 #include "libft.h"
-
 
 char	*ft_str_extend(char *s, char filler, int reslen)
 {
@@ -58,7 +57,7 @@ int	ft_atoi_cub(char *s)
 	return (res);
 }
 
-static void	print_error(const char *message)
+void	print_error(const char *message)
 {
 	write(STDERR_FILENO, "Error\n", 6);
 	if (message == NULL)
@@ -80,13 +79,13 @@ void	free_mem(t_data *data)
 		free(data->textures.no_path);
 	if (data->textures.we_path)
 		free(data->textures.we_path);
-	if (data->textures.ea)
+	if (!data->mlx && data->textures.ea)
 		free(data->textures.ea);
-	if (data->textures.so)
+	if (!data->mlx && data->textures.so)
 		free(data->textures.so);
-	if (data->textures.no)
+	if (!data->mlx && data->textures.no)
 		free(data->textures.no);
-	if (data->textures.we)
+	if (!data->mlx && data->textures.we)
 		free(data->textures.we);
 	if (data->map.grid)
 		free_str_arr(&(data->map.grid));
@@ -101,26 +100,3 @@ void	terminate(t_data *data, const char *err_message)
 	free_mem(data);
 	exit(1);
 }
-
-// void pr(t_data *data)
-// {
-// 	char **p = data->map.grid;
-// 	printf("%d %d\n", data->map.h, data->map.w);
-// 	while (*p != NULL)
-// 	{
-// 		printf("[%s]\n", p[0]);
-// 		p++;
-// 	}
-// }
-
-// void	print_map2(t_data *data)
-// {
-// 	int	i;
-
-// 	i = 0;
-// 	while (data->map.grid[i])
-// 	{
-// 		ft_printf("NORM: [%s]\n", data->map.grid[i]);
-// 		i++;
-// 	}
-// }

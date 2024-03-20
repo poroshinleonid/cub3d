@@ -6,7 +6,7 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 16:58:48 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/03/20 15:04:08 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/03/20 15:32:38 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 
 int	load_map(t_data *data, int fd)
 {
-	int	tmp;
+	int		tmp;
 
 	while (1)
 	{
@@ -28,7 +28,7 @@ int	load_map(t_data *data, int fd)
 		if (tmp == -1)
 			terminate(data, "Can't read the map file");
 		else if (tmp == 1)
-			break;
+			break ;
 	}
 	close(fd);
 	if (data->map.h == -1)

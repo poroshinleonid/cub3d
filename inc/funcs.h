@@ -23,6 +23,7 @@ void	movement_hook(t_data *data);
 int 	check_players(t_data *data);
 int		ft_atoi_cub(char *s);
 void	terminate(t_data *data, const char *err_message);
+void	free_mem(t_data *data);
 char	*ft_str_extend(char *s, char filler, int reslen);
 void	replace_spaces(t_data *data);
 int		is_map_valid(t_data *data);
@@ -30,6 +31,7 @@ int		find_player_pos(t_data *data);
 int		save_map_metainf(t_data *data, int fd);
 int		save_map_info(t_data *data, char *line, int fd);
 void	normalize_map(t_data *data);
+void	print_error(const char *message);
 
 
 
