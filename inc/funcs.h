@@ -20,6 +20,7 @@ int		parse_map(t_data *data, char *pathname);
 
 void	render(void *void_data);
 void	listen_keys(void *void_data);
+void	close_hook(void *void_data);
 void	resize_hook(int32_t width, int32_t height, void *void_data);
 void	draw_rays(t_data *data);
 
