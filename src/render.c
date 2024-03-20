@@ -29,6 +29,5 @@ void	render(void *void_data)
 
 	data = (t_data *)void_data;
 	clear_3d(data);
-	clear_3d(data);
 	draw_rays(data);
 }
