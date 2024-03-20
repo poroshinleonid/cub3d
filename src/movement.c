@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   movement.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: trusanov <trusanov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 15:30:41 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/03/20 15:30:42 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/03/20 16:55:13 by trusanov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,9 +38,9 @@ static void	nullify_if_wall(t_data *data, float *dx, float *dy)
 	(void)data;
 	(void)dx;
 	(void)dy;
-	if (is_wall(data, data->player.x + *dx, data->player.y))
+	if (is_wall(data, data->player.x + *dx * 3, data->player.y))
 		*dx = 0.0;
-	if (is_wall(data, data->player.x, data->player.y + *dy))
+	if (is_wall(data, data->player.x, data->player.y + *dy * 3))
 		*dy = 0.0;
 }
 
