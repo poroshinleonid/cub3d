@@ -6,7 +6,7 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 14:34:36 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/03/20 15:39:17 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/03/20 16:55:09 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,8 +91,8 @@ int	save_map_metainf(t_data *data, int fd)
 		(line[0] == 'S' && data->textures.so_path == NULL) || \
 		(line[0] == 'W' && data->textures.we_path == NULL) || \
 		(line[0] == 'E' && data->textures.ea_path == NULL) || \
-		(line[0] == 'F' && data->map.floor_col == 0xFF000000) || \
-		(line[0] == 'C' && data->map.sky_col == 0xFF000000))
+		(line[0] == 'F' && data->map.floor_col == 0x00000000) || \
+		(line[0] == 'C' && data->map.sky_col == 0x00000000))
 		return (save_map_info(data, line, fd));
 	else if (line[0] == '\0' || ft_consists_of(line, " \t\v\f\r"))
 		return (0);

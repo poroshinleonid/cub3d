@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   config.h                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/03/20 16:59:24 by lporoshi          #+#    #+#             */
+/*   Updated: 2024/03/20 17:00:00 by lporoshi         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef CONFIG_H
 # define CONFIG_H
 
@@ -9,7 +21,8 @@
 
 # define PI 3.14159265359
 
-# define FOV PI / 3
+// PI / 3
+# define FOV 1.0471975512
 
 # define PLAYER_SPEED 4.0
 # define PL_ROT_SPEED 0.1
@@ -30,27 +43,3 @@
 # define MAP_PLAYER_CHARSET "NSWE"
 
 #endif
-
-
-// #ifndef CONFIG_H
-// # define  CONFIG_H
-
-// # define EPS 0.000001
-
-// # define WIN_WIDTH	1920
-// # define WIN_WIDTH_DO 1920.0
-// # define WIN_HEIGHT	1080
-
-// # define TILE_SZ 10
-// # define TILE_BORDER_SZ 1
-
-// # define PL_SPEED_SCALE 5
-// # define PL_ROT_SPEED 0.1
-
-// # define PL_SPEED 0.1
-
-// # define PI 3.14159265359
-
-// # define FOV_ANGLE 1.0472
-
-// #endif
