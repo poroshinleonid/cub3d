@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   keys.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: trusanov <trusanov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 15:30:32 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/03/20 15:30:33 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/03/20 16:59:57 by trusanov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,4 +60,14 @@ void	resize_hook(int32_t width, int32_t height, void *void_data)
 	data->img_width = width;
 	data->img_height = height;
 	mlx_resize_image(data->img_3d, width, height);
+}
+
+void	close_hook(void *void_data)
+{
+	t_data *data;
+
+	data = (t_data *)void_data;
+	free_mem(data);
+	ft_printf("Goodbye!\n");
+	exit(0);
 }

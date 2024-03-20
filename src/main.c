@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: trusanov <trusanov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 15:30:37 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/03/20 15:31:23 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/03/20 16:58:30 by trusanov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ int	main(int argc, char **argv)
 	data.map.floor_col = data.map.floor_col * 0x100 + 0xFF;
 	mlx_loop_hook(data.mlx, render, &data);
 	mlx_loop_hook(data.mlx, listen_keys, &data);
+	mlx_close_hook(data.mlx, close_hook, &data);
 	mlx_resize_hook(data.mlx, resize_hook, &data);
 	mlx_image_to_window(data.mlx, data.img_3d, 0, 0);
 	mlx_loop(data.mlx);
