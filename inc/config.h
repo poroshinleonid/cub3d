@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   config.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: trusanov <trusanov@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/03/20 16:27:50 by trusanov          #+#    #+#             */
-/*   Updated: 2024/03/20 16:27:51 by trusanov         ###   ########.fr       */
+/*   Created: 2024/03/20 16:59:24 by lporoshi          #+#    #+#             */
+/*   Updated: 2024/03/20 17:00:00 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@
 # define W_MAP 6
 
 # define PI 3.14159265359
-
 # define FOV 1.0471975512
 
 # define PLAYER_SPEED 4.0

@@ -6,7 +6,7 @@
 /*   By: trusanov <trusanov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 15:30:37 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/03/20 16:58:30 by trusanov         ###   ########.fr       */
+/*   Updated: 2024/03/20 16:28:59 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,11 +28,30 @@ void	load_stuff(t_data *data)
 	load_textures(data);
 }
 
+int	check_args(int argc, char **argv)
+{
+	int		i;
+	char	*lineptr;
+
+	if (argc != 2 || !argv || !(argv[1]))
+		return (1);
+	lineptr = argv[1];
+	i = ft_strlen(lineptr);
+	if (i < 5)
+		return (1);
+	if (!(lineptr[i - 1] == 'b' && \
+	lineptr[i - 2] == 'u' && \
+	lineptr[i - 3] == 'c' && \
+	lineptr[i - 4] == '.'))
+		return (1);
+	return (0);
+}
+
 int	main(int argc, char **argv)
 {
 	t_data	data;
 
-	if (argc != 2 || !argv || !(argv[1]))
+	if (check_args(argc, argv) != 0)
 	{
 		print_error("Can't parse command line arguments");
 		return (EXIT_FAILURE);

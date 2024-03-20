@@ -6,7 +6,7 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 14:33:00 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/03/20 15:38:09 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/03/20 16:57:15 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include "config.h"
 #include "libft.h"
 
+//RRGGBBAA
 int32_t	parse_color(t_data *data, char *line, int fd)
 {
 	int		r;
@@ -26,7 +27,8 @@ int32_t	parse_color(t_data *data, char *line, int fd)
 	char	**colors;
 
 	colors = ft_split(line, ' ');
-	if (colors == NULL)
+	if (colors == NULL || !(colors[0]) || !(colors[1]) || \
+		!(colors[2]) || !(colors[3]))
 	{
 		free(line);
 		close(fd);
@@ -41,7 +43,7 @@ int32_t	parse_color(t_data *data, char *line, int fd)
 		close(fd);
 		terminate(data, "Can't parse colors!!!");
 	}
-	return ((r << 16) + (g << 8) + (b));
+	return ((r << 24) + (g << 16) + (b << 8) + 0xFF);
 }
 
 int	save_player_pos(t_data *data, int x, int y)

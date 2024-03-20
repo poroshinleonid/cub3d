@@ -6,7 +6,7 @@
 /*   By: lporoshi <lporoshi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 16:58:48 by lporoshi          #+#    #+#             */
-/*   Updated: 2024/03/20 15:32:38 by lporoshi         ###   ########.fr       */
+/*   Updated: 2024/03/20 16:55:59 by lporoshi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,8 @@ int	load_map(t_data *data, int fd)
 		else if (tmp == 1)
 			break ;
 	}
+	if (data->map.floor_col == 0 || data->map.sky_col == 0)
+		terminate(data, "Can't read the colors");
 	close(fd);
 	if (data->map.h == -1)
 		terminate(data, "Can't read the map file");
@@ -44,8 +46,8 @@ int	load_map(t_data *data, int fd)
 void	prepare_data(t_data *data)
 {
 	data->map.h = -1;
-	data->map.floor_col = 0xFF000000;
-	data->map.sky_col = 0xFF000000;
+	data->map.floor_col = 0x00000000;
+	data->map.sky_col = 0x00000000;
 	data->textures.no_path = NULL;
 	data->textures.so_path = NULL;
 	data->textures.we_path = NULL;
