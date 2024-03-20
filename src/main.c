@@ -40,6 +40,8 @@ int	main(int argc, char **argv)
 	if (parse_map(&data, argv[1]) == EXIT_FAILURE)
 		terminate(&data, "Can't parse the map");
 	load_stuff(&data);
+	data.map.sky_col = data.map.sky_col * 0x100 + 0xFF;
+	data.map.floor_col = data.map.floor_col * 0x100 + 0xFF;
 	mlx_loop_hook(data.mlx, render, &data);
 	mlx_loop_hook(data.mlx, listen_keys, &data);
 	mlx_resize_hook(data.mlx, resize_hook, &data);
