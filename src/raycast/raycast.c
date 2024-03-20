@@ -69,10 +69,10 @@ static void	draw_one_line(t_data *data, t_point point, int x, float ra)
 		* data->img_3d->height;
 	fl_sky_h = (data->img_3d->height - wall_h) / 2;
 	draw_vertical_line(data->img_3d, (t_ver_line){.x = x, .start = 0,
-		.end = fl_sky_h, .color = SKY_CLR});
+		.end = fl_sky_h, .color = data->map.sky_col});
 	draw_vertical_line(data->img_3d, (t_ver_line){.x = x,
 		.start = fminf(fl_sky_h + wall_h, data->img_3d->height),
-		.end = data->img_3d->height, .color = FLOOR_CLR});
+		.end = data->img_3d->height, .color = data->map.floor_col});
 	texture = get_texture_type(self.y - point.y > 0, self.x - point.x < 0,
 			point, data);
 	y = fl_sky_h;
